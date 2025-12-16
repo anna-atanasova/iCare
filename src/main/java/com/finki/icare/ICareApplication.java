@@ -1,13 +1,13 @@
-package com.finki.bnp;
+package com.finki.icare;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BnpApplication {
+public class ICareApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BnpApplication.class, args);
+        SpringApplication.run(ICareApplication.class, args);
     }
 
 }
