@@ -15,10 +15,11 @@ CREATE TABLE IF NOT EXISTS "user" (
 
 -- THERAPIST (extends USER)
 CREATE TABLE IF NOT EXISTS therapist (
-    id_user         INTEGER PRIMARY KEY,
-    office_location VARCHAR(255) NOT NULL,
-    degree          VARCHAR(100) NOT NULL,
-    years_exp       INTEGER      NOT NULL CHECK (years_exp >= 0),
+    id_user              INTEGER PRIMARY KEY,
+    office_location      VARCHAR(255) NOT NULL,
+    degree               VARCHAR(100) NOT NULL,
+    years_exp            INTEGER      NOT NULL CHECK (years_exp >= 0),
+    consultation_slots   DATE[],
     CONSTRAINT fk_therapist_user
         FOREIGN KEY (id_user) REFERENCES "user"(id_user)
             ON UPDATE CASCADE ON DELETE CASCADE
@@ -135,3 +136,4 @@ CREATE INDEX IF NOT EXISTS idx_consultation_patient_date
 
 CREATE INDEX IF NOT EXISTS idx_consultation_therapist_date
     ON consultation (id_therapist, date DESC);
+
