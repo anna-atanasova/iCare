@@ -1,5 +1,6 @@
 package com.finki.icare.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -41,6 +42,7 @@ public class Consultation {
     @Column(name = "advice", columnDefinition = "TEXT")
     private String advice;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "consultation", cascade = CascadeType.ALL)
     private List<Therapy> therapies;
 }

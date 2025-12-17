@@ -1,5 +1,6 @@
 package com.finki.icare.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -33,9 +34,11 @@ public class Blog {
     @Column(name = "date_of_post", nullable = false)
     private OffsetDateTime dateOfPost;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL)
     private List<Comment> comments;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "likedBlogs")
     private List<Patient> likedBy;
 }
