@@ -102,125 +102,32 @@ INSERT INTO diary (id_patient, date, daily_rating, content) VALUES
 (8, '2024-12-03', 8, 'Continuing to make progress.'),
 (8, '2024-12-04', 9, 'Therapy is really working for me.');
 
--- ========== INSERT THERAPIES ==========
-INSERT INTO therapy (name, dose, exp_date, price) VALUES
-('Sertraline (Zoloft)', '50mg daily', '2025-12-31', 25.00),
-('Fluoxetine (Prozac)', '20mg daily', '2025-11-30', 20.00),
-('Escitalopram (Lexapro)', '10mg daily', '2025-10-31', 30.00),
-('Bupropion (Wellbutrin)', '150mg twice daily', '2026-01-31', 45.00),
-('Alprazolam (Xanax)', '0.5mg as needed', '2025-06-30', 15.00),
-('Lorazepam (Ativan)', '1mg as needed', '2025-08-31', 18.00),
-('Cognitive Behavioral Therapy (CBT)', 'Weekly sessions', '2026-12-31', 120.00),
-('Dialectical Behavior Therapy (DBT)', 'Weekly sessions', '2026-12-31', 130.00),
-('Mindfulness-Based Stress Reduction', 'Bi-weekly sessions', '2026-12-31', 80.00);
-
 -- ========== INSERT CONSULTATIONS ==========
-INSERT INTO consultation (id_therapist, date, price) VALUES
+INSERT INTO consultation (id_patient, id_therapist, date, date_of_payment, price, advice) VALUES
 -- Dr. Smith's consultations
-(1, '2024-12-10 09:00:00+00', 120.00),
-(1, '2024-12-10 10:30:00+00', 120.00),
-(1, '2024-12-11 14:00:00+00', 120.00),
+(5, 1, '2024-12-10', '2024-12-10', 120.00, 'Alice has made excellent progress with her anxiety management. She consistently applies coping strategies discussed in sessions. Continue with current treatment plan and CBT focus.'),
+(6, 1, '2024-12-10', '2024-12-10', 120.00, 'Bob has shown significant improvement in emotional regulation through painting. Encourage continued creative expression as a therapeutic outlet.'),
+(5, 1, '2024-11-30', '2024-12-01', 120.00, 'Monthly check-in: Alice reports feeling more confident in social situations. Recommend continuing weekly sessions and maintaining medication regimen.'),
 -- Dr. Johnson's consultations
-(2, '2024-12-10 11:00:00+00', 130.00),
-(2, '2024-12-11 09:30:00+00', 130.00),
-(2, '2024-12-11 15:00:00+00', 130.00),
+(7, 2, '2024-12-10', '2024-12-10', 130.00, 'Charlie is responding well to DBT techniques. Breathing exercises have become a valuable tool for managing acute stress. Continue current approach.'),
+(8, 2, '2024-12-11', '2024-12-11', 130.00, 'Diana demonstrates strong engagement with therapy. Her gratitude and positive outlook suggest excellent therapeutic alliance. Maintain current treatment plan.'),
+(8, 2, '2024-11-22', '2024-11-25', 130.00, 'Follow-up session with Diana. Continue current treatment approach as she responds very well.'),
 -- Dr. Williams's consultations
-(3, '2024-12-10 13:00:00+00', 150.00),
-(3, '2024-12-11 10:00:00+00', 150.00),
+(9, 3, '2024-12-10', '2024-12-10', 150.00, 'Ethan shows dedication to mindfulness practice despite initial challenges. Progress is steady. Consider introducing advanced meditation techniques next month.'),
+(10, 3, '2024-12-11', '2024-12-11', 150.00, 'Fiona has reached a significant milestone at 6 months. Her self-awareness and coping skills have improved dramatically. Proud of her progress.'),
 -- Dr. Brown's consultations
-(4, '2024-12-10 15:30:00+00', 125.00),
-(4, '2024-12-11 11:30:00+00', 125.00);
+(11, 4, '2024-12-10', '2024-12-10', 125.00, 'George understands that recovery is not linear. His acceptance of setbacks shows maturity. Continue supportive therapy and mindfulness practices.'),
+(12, 4, '2024-12-11', '2024-12-11', 125.00, 'Hannah has discovered journaling as an effective emotional processing tool. Excellent self-initiated coping mechanism. Encourage daily practice.');
 
--- ========== INSERT PATIENT ATTENDANCE ==========
-INSERT INTO patient_attends_consultation (id_patient, id_consultations) VALUES
-(5, 1),
-(6, 2),
-(5, 3),
-(7, 4),
-(8, 5),
-(8, 6),
-(9, 7),
-(10, 8),
-(11, 9),
-(12, 10);
-
--- ========== INSERT THERAPIST PRESCRIBES THERAPY ==========
-INSERT INTO therapist_prescribes_therapy (id_therapist, id_therapy) VALUES
-(1, 1),
-(1, 7),
-(2, 2),
-(2, 8),
-(3, 3),
-(3, 4),
-(4, 5),
-(4, 9);
-
--- ========== INSERT PATIENT PRESCRIBED THERAPY ==========
-INSERT INTO patient_is_prescribed_therapy (id_patient, id_therapy) VALUES
-(5, 1),
-(5, 7),
-(6, 1),
-(7, 2),
-(7, 8),
-(8, 2),
-(9, 3),
-(9, 4),
-(10, 3),
-(11, 5),
-(11, 9),
-(12, 9);
-
--- ========== INSERT CONSULTATION PRESCRIBED THERAPY ==========
-INSERT INTO consultation_prescribed_therapy (id_consultations, id_therapy) VALUES
-(1, 1),
-(1, 7),
-(2, 1),
-(4, 2),
-(4, 8),
-(7, 3),
-(7, 4),
-(9, 5),
-(9, 9);
-
--- ========== INSERT PAYMENTS ==========
-INSERT INTO payment (id_patient, date_of_payment) VALUES
-(5, '2024-12-10 09:30:00+00'),
-(6, '2024-12-10 11:00:00+00'),
-(5, '2024-12-11 14:30:00+00'),
-(7, '2024-12-10 11:45:00+00'),
-(8, '2024-12-11 10:00:00+00'),
-(8, '2024-12-11 15:30:00+00'),
-(9, '2024-12-10 13:30:00+00'),
-(10, '2024-12-11 10:30:00+00'),
-(11, '2024-12-10 16:00:00+00'),
-(12, '2024-12-11 12:00:00+00');
-
--- ========== INSERT PAYMENT FOR CONSULTATION ==========
-INSERT INTO payment_for_consultation (id_payment, id_consultations) VALUES
-(1, 1),
-(2, 2),
-(3, 3),
-(4, 4),
-(5, 5),
-(6, 6),
-(7, 7),
-(8, 8),
-(9, 9),
-(10, 10);
-
--- ========== INSERT THERAPIST REVIEWS ==========
-INSERT INTO therapist_reviews_patient (id_therapist, id_patient, advice, review_date) VALUES
--- Dr. Smith's reviews
-(1, 5, 'Alice has made excellent progress with her anxiety management. She consistently applies coping strategies discussed in sessions. Continue with current treatment plan and CBT focus.', '2024-11-30'),
-(1, 5, 'Monthly check-in: Alice reports feeling more confident in social situations. Recommend continuing weekly sessions and maintaining medication regimen.', '2024-10-31'),
-(1, 6, 'Bob has shown significant improvement in emotional regulation through painting. Encourage continued creative expression as a therapeutic outlet.', '2024-11-28'),
--- Dr. Johnson's reviews
-(2, 7, 'Charlie is responding well to DBT techniques. Breathing exercises have become a valuable tool for managing acute stress. Continue current approach.', '2024-11-25'),
-(2, 8, 'Diana demonstrates strong engagement with therapy. Her gratitude and positive outlook suggest excellent therapeutic alliance. Maintain current treatment plan.', '2024-11-22'),
--- Dr. Williams's reviews
-(3, 9, 'Ethan shows dedication to mindfulness practice despite initial challenges. Progress is steady. Consider introducing advanced meditation techniques next month.', '2024-11-20'),
-(3, 10, 'Fiona has reached a significant milestone at 6 months. Her self-awareness and coping skills have improved dramatically. Proud of her progress.', '2024-11-18'),
--- Dr. Brown's reviews
-(4, 11, 'George understands that recovery is not linear. His acceptance of setbacks shows maturity. Continue supportive therapy and mindfulness practices.', '2024-11-15'),
-(4, 12, 'Hannah has discovered journaling as an effective emotional processing tool. Excellent self-initiated coping mechanism. Encourage daily practice.', '2024-11-12');
+-- ========== INSERT THERAPIES ==========
+INSERT INTO therapy (name, dose, exp_date, id_consultation) VALUES
+('Sertraline (Zoloft)', '50mg daily', '2025-12-31', 1),
+('Cognitive Behavioral Therapy (CBT)', 'Weekly sessions', '2026-12-31', 1),
+('Sertraline (Zoloft)', '50mg daily', '2025-12-31', 2),
+('Fluoxetine (Prozac)', '20mg daily', '2025-11-30', 4),
+('Dialectical Behavior Therapy (DBT)', 'Weekly sessions', '2026-12-31', 4),
+('Escitalopram (Lexapro)', '10mg daily', '2025-10-31', 7),
+('Bupropion (Wellbutrin)', '150mg twice daily', '2026-01-31', 7),
+('Alprazolam (Xanax)', '0.5mg as needed', '2025-06-30', 9),
+('Mindfulness-Based Stress Reduction', 'Bi-weekly sessions', '2026-12-31', 9);
 
