@@ -10,7 +10,6 @@ import java.time.LocalDate;
 @Entity
 @Table(
     name = "diary",
-    schema = "mental_health_app",
     uniqueConstraints = @UniqueConstraint(columnNames = {"id_patient", "date"})
 )
 @Data

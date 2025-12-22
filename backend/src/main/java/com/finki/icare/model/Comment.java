@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.OffsetDateTime;
 
 @Entity
-@Table(name = "comment", schema = "mental_health_app")
+@Table(name = "comment")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

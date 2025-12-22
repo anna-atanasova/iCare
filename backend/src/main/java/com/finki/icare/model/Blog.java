@@ -10,7 +10,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "blog", schema = "mental_health_app")
+@Table(name = "blog")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

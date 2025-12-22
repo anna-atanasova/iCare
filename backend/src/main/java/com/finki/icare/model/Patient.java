@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Entity
-@Table(name = "patient", schema = "mental_health_app")
+@Table(name = "patient")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -42,7 +42,6 @@ public class Patient extends User {
     @ManyToMany
     @JoinTable(
         name = "patient_likes_blog",
-        schema = "mental_health_app",
         joinColumns = @JoinColumn(name = "id_patient"),
         inverseJoinColumns = @JoinColumn(name = "id_blog")
     )

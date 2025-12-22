@@ -1,6 +1,3 @@
-CREATE SCHEMA IF NOT EXISTS mental_health_app;
-SET search_path = mental_health_app, public;
-
 -- ========== TABLES ==========
 
 -- USER

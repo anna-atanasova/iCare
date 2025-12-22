@@ -1,10 +1,15 @@
 import { Component, createSignal } from "solid-js";
+import { useNavigate } from "@solidjs/router";
+import { useAuth } from "../context/AuthContext";
+import { authApi } from "../api/auth";
 
 const Login: Component = () => {
   const [username, setUsername] = createSignal("");
   const [password, setPassword] = createSignal("");
   const [error, setError] = createSignal("");
   const [isLoading, setIsLoading] = createSignal(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
@@ -12,13 +17,20 @@ const Login: Component = () => {
     setIsLoading(true);
 
     try {
-      // TODO: Implement actual API call
-      console.log("Login:", {
+      const response = await authApi.login({
         username: username(),
         password: password(),
       });
+
+      login(response);
+
+      navigate("/");
     } catch (err) {
-      setError("An error occurred. Please try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Error has occurred while logging in. Please try again.",
+      );
       console.error("Login error:", err);
     } finally {
       setIsLoading(false);
@@ -44,7 +56,7 @@ const Login: Component = () => {
             </div>
           )}
 
-          <div class="rounded-md shadow-sm space-y-4">
+          <div class="rounded-md space-y-4">
             <div>
               <label
                 for="username"

@@ -1,16 +1,15 @@
 -- V2: Insert mock data for mental health app
-SET search_path = mental_health_app, public;
 
 -- ========== INSERT USERS ==========
 -- Insert base users (therapists and patients)
 INSERT INTO "user" (username, name, surname, email, password) VALUES
 -- Therapists
-('dr.smith', 'John', 'Smith', 'john.smith@therapy.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy'), -- password: therapist123
+('dr.smith', 'John', 'Smith', 'john.smith@therapy.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy'),
 ('dr.johnson', 'Emily', 'Johnson', 'emily.johnson@therapy.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy'),
 ('dr.williams', 'Michael', 'Williams', 'michael.williams@therapy.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy'),
 ('dr.brown', 'Sarah', 'Brown', 'sarah.brown@therapy.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy'),
 -- Patients
-('alice.wonder', 'Alice', 'Wonder', 'alice.wonder@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy'), -- password: patient123
+('alice.wonder', 'Alice', 'Wonder', 'alice.wonder@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy'),
 ('bob.builder', 'Bob', 'Builder', 'bob.builder@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy'),
 ('charlie.chaplin', 'Charlie', 'Chaplin', 'charlie.chaplin@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy'),
 ('diana.prince', 'Diana', 'Prince', 'diana.prince@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy'),

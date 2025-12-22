@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "consultation", schema = "mental_health_app")
+@Table(name = "consultation")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
