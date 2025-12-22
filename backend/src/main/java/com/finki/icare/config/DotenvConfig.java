@@ -14,8 +14,7 @@ public class DotenvConfig implements ApplicationContextInitializer<ConfigurableA
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
         Dotenv dotenv = Dotenv.configure()
-                .directory("./")
-                .ignoreIfMissing()
+                .directory("./backend")
                 .load();
 
         ConfigurableEnvironment environment = applicationContext.getEnvironment();
@@ -23,6 +22,7 @@ public class DotenvConfig implements ApplicationContextInitializer<ConfigurableA
 
         dotenv.entries().forEach(entry -> {
             dotenvProperties.put(entry.getKey(), entry.getValue());
+            System.setProperty(entry.getKey(), entry.getValue());
         });
 
         environment.getPropertySources()
