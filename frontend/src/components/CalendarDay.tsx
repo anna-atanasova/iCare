@@ -4,6 +4,8 @@ interface CalendarDayProps {
   day: number | null;
   isCurrentMonth: boolean;
   hasEntry: boolean;
+  isFuture?: boolean;
+  isToday?: boolean;
   entry?: {
     dailyRating: number;
     content: string;
@@ -27,12 +29,24 @@ const CalendarDay: Component<CalendarDayProps> = (props) => (
     }
   >
     <div
-      class={`border-2 rounded-lg h-24 p-2 transition-all cursor-pointer ${
+      class={`rounded-lg h-24 p-2 transition-all ${
+        props.isToday ? "border-4 border-blue-600 shadow-lg" : "border-2"
+      } ${props.isFuture ? "" : "cursor-pointer"} ${
         props.hasEntry
           ? `${getRatingColor(props.entry!.dailyRating)} hover:shadow-md`
-          : "bg-white border-gray-200 text-gray-300 hover:border-gray-300"
+          : props.isFuture
+            ? "bg-white border-gray-200 text-gray-400 relative overflow-hidden"
+            : "bg-white border-gray-200 text-gray-300 hover:border-gray-300"
       }`}
-      onClick={props.onClick}
+      onClick={props.isFuture ? undefined : props.onClick}
+      style={
+        props.isFuture && !props.hasEntry
+          ? {
+              "background-image":
+                "repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.03) 10px, rgba(0,0,0,0.03) 20px)",
+            }
+          : {}
+      }
     >
       <div class="flex justify-between items-start mb-1">
         <span

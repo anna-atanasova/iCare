@@ -45,3 +45,17 @@ export const dateToString = (date: Date): string => {
 };
 
 export const getTodayString = (): string => dateToString(new Date());
+
+export const isFutureDate = (date: Date | null): boolean => {
+  if (!date) return false;
+  const dateStr = dateToString(date);
+  const todayStr = getTodayString();
+  return dateStr > todayStr;
+};
+
+export const isTodayDate = (date: Date | null): boolean => {
+  if (!date) return false;
+  const dateStr = dateToString(date);
+  const todayStr = getTodayString();
+  return dateStr === todayStr;
+};

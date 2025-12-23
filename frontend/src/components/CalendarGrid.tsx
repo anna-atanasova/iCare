@@ -1,6 +1,7 @@
 import { Component, For } from "solid-js";
 import CalendarDay from "./CalendarDay";
 import { DiaryEntry } from "../api/diary";
+import { isFutureDate, isTodayDate } from "../utils";
 
 interface CalendarGridProps {
   days: Array<{
@@ -17,11 +18,16 @@ const CalendarGrid: Component<CalendarGridProps> = (props) => (
     <For each={props.days}>
       {(dayInfo) => {
         const entry = props.getEntryForDate(dayInfo.date);
+        const isFuture = isFutureDate(dayInfo.date);
+        const isToday = isTodayDate(dayInfo.date);
+
         return (
           <CalendarDay
             day={dayInfo.day}
             isCurrentMonth={dayInfo.isCurrentMonth}
             hasEntry={!!entry}
+            isFuture={isFuture}
+            isToday={isToday}
             entry={
               entry
                 ? {
