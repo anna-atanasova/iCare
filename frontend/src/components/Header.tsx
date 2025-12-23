@@ -47,6 +47,16 @@ const Header: Component = () => {
               </A>
             </Show>
 
+            <Show when={isAuthenticated() && user()?.userType === "THERAPIST"}>
+              <A
+                href="/consultation-slots"
+                class="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                activeClass="text-blue-600"
+              >
+                Consultation Slots
+              </A>
+            </Show>
+
             <Show
               when={isAuthenticated()}
               fallback={
