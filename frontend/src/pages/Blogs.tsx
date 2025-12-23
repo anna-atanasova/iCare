@@ -140,7 +140,7 @@ const Blogs: Component = () => {
         <h1 class="text-3xl font-bold text-gray-900">Community Blogs</h1>
         <button
           onClick={() => setShowCreateForm(!showCreateForm())}
-          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors cursor-pointer"
         >
           {showCreateForm() ? "Cancel" : "Create Post"}
         </button>
