@@ -19,14 +19,14 @@ INSERT INTO "user" (username, name, surname, email, password) VALUES
 ('hannah.montana', 'Hannah', 'Montana', 'hannah.montana@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy');
 
 -- ========== INSERT THERAPISTS ==========
-INSERT INTO therapist (id_user, office_location, degree, years_exp, consultation_slots) VALUES
-(1, 'Building A, Room 101, Downtown Medical Center', 'Ph.D. in Clinical Psychology', 15,
+INSERT INTO therapist (id_user, office_location, degree, years_exp, phone_number, consultation_slots) VALUES
+(1, 'Building A, Room 101, Downtown Medical Center', 'Ph.D. in Clinical Psychology', 15, '+1-555-0101',
     ARRAY['2025-12-18', '2025-12-19', '2025-12-20', '2025-12-22', '2025-12-23']::DATE[]),
-(2, 'Building B, Suite 205, Wellness Plaza', 'Psy.D. in Counseling Psychology', 10,
+(2, 'Building B, Suite 205, Wellness Plaza', 'Psy.D. in Counseling Psychology', 10, '+1-555-0102',
     ARRAY['2025-12-18', '2025-12-19', '2025-12-21', '2025-12-22', '2025-12-24']::DATE[]),
-(3, 'Building C, Floor 3, Mental Health Institute', 'M.D. Psychiatry', 20,
+(3, 'Building C, Floor 3, Mental Health Institute', 'M.D. Psychiatry', 20, '+1-555-0103',
     ARRAY['2025-12-19', '2025-12-20', '2025-12-21', '2025-12-23', '2025-12-24']::DATE[]),
-(4, 'Building A, Room 150, Downtown Medical Center', 'Ph.D. in Clinical Psychology', 8,
+(4, 'Building A, Room 150, Downtown Medical Center', 'Ph.D. in Clinical Psychology', 8, '+1-555-0104',
     ARRAY['2025-12-18', '2025-12-20', '2025-12-21', '2025-12-22', '2025-12-23']::DATE[]);
 
 -- ========== INSERT PATIENTS ==========

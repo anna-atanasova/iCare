@@ -30,6 +30,9 @@ public class Therapist extends User {
     @Column(name = "years_exp", nullable = false)
     private Integer yearsExp;
 
+    @Column(name = "phone_number", nullable = false, length = 20)
+    private String phoneNumber;
+
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Column(name = "consultation_slots", columnDefinition = "DATE[]")
     private LocalDate[] consultationSlots;

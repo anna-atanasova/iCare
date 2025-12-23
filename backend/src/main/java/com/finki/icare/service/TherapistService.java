@@ -36,6 +36,7 @@ public class TherapistService {
         dto.setOfficeLocation(therapist.getOfficeLocation());
         dto.setDegree(therapist.getDegree());
         dto.setYearsExp(therapist.getYearsExp());
+        dto.setPhoneNumber(therapist.getPhoneNumber());
 
         List<LocalDate> freeSlots = new ArrayList<>();
         if (therapist.getConsultationSlots() != null) {

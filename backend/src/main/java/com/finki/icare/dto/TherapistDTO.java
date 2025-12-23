@@ -18,5 +18,6 @@ public class TherapistDTO {
     private String officeLocation;
     private String degree;
     private Integer yearsExp;
+    private String phoneNumber;
     private List<LocalDate> freeConsultationSlots;
 }

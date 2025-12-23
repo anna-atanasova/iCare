@@ -10,6 +10,7 @@ export interface TherapistInfo {
   officeLocation: string;
   degree: string;
   yearsExp: number;
+  phoneNumber: string;
   freeConsultationSlots: string[];
 }
 

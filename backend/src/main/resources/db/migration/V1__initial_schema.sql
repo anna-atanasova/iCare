@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS therapist (
     office_location      VARCHAR(255) NOT NULL,
     degree               VARCHAR(100) NOT NULL,
     years_exp            INTEGER      NOT NULL CHECK (years_exp >= 0),
+    phone_number         VARCHAR(20)  NOT NULL,
     consultation_slots   DATE[],
     CONSTRAINT fk_therapist_user
         FOREIGN KEY (id_user) REFERENCES "user"(id_user)
