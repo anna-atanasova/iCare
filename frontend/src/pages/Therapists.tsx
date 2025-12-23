@@ -12,7 +12,13 @@ const Therapists: Component = () => {
     isAuthenticated,
     async (authenticated) => {
       if (!authenticated) return [];
-      return await therapistApi.getAllTherapists();
+      const data = await therapistApi.getAllTherapists();
+
+      return data.sort((a, b) => {
+        const slotsA = a.freeConsultationSlots?.length || 0;
+        const slotsB = b.freeConsultationSlots?.length || 0;
+        return slotsB - slotsA;
+      });
     },
   );
 

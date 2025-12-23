@@ -57,6 +57,17 @@ const CommentSection: Component<CommentSectionProps> = (props) => {
   const isCommentOwner = (comment: Comment) =>
     user()?.userId === comment.patientId;
 
+  const sortedComments = () => {
+    if (!props.comments) return [];
+
+    return [...props.comments].sort((a, b) => {
+      return (
+        new Date(b.dateOfComment).getTime() -
+        new Date(a.dateOfComment).getTime()
+      );
+    });
+  };
+
   return (
     <div class="space-y-4">
       <h3 class="text-xl font-semibold text-gray-900 mb-4">Comments</h3>
@@ -86,7 +97,7 @@ const CommentSection: Component<CommentSectionProps> = (props) => {
 
       <Show when={(props.comments?.length || 0) > 0}>
         <div class="space-y-4">
-          <For each={props.comments}>
+          <For each={sortedComments()}>
             {(comment) => (
               <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
                 <div class="flex justify-between items-start mb-2">
