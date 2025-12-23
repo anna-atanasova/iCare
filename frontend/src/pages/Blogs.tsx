@@ -117,6 +117,92 @@ const Blogs: Component = () => {
     }
   };
 
+  const handleUpdateBlog = async (
+    blogId: number,
+    title: string,
+    content: string,
+  ) => {
+    try {
+      await blogApi.updateBlog(blogId, { title, content });
+      await loadBlogs();
+
+      if (selectedBlog()?.idBlog === blogId) {
+        const updatedBlog = await blogApi.getBlog(blogId);
+        setSelectedBlog(updatedBlog);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update blog");
+      throw err;
+    }
+  };
+
+  const handleDeleteBlog = async (blogId: number) => {
+    try {
+      await blogApi.deleteBlog(blogId);
+      await loadBlogs();
+
+      if (selectedBlog()?.idBlog === blogId) {
+        setSelectedBlog(null);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete blog");
+      throw err;
+    }
+  };
+
+  const handleUpdateComment = async (commentId: number, content: string) => {
+    const blog = selectedBlog();
+    if (!blog) return;
+
+    try {
+      const updatedComment = await blogApi.updateComment(commentId, content);
+
+      const updateBlogComments = (b: BlogPost) => {
+        if (b.idBlog === blog.idBlog) {
+          return {
+            ...b,
+            comments: b.comments.map((c) =>
+              c.idComment === commentId ? updatedComment : c,
+            ),
+          };
+        }
+        return b;
+      };
+
+      setBlogs(blogs().map(updateBlogComments));
+      setSelectedBlog(updateBlogComments(blog));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update comment");
+      throw err;
+    }
+  };
+
+  const handleDeleteComment = async (commentId: number) => {
+    const blog = selectedBlog();
+    if (!blog) return;
+
+    try {
+      await blogApi.deleteComment(commentId);
+
+      const updateBlogComments = (b: BlogPost) => {
+        if (b.idBlog === blog.idBlog) {
+          return {
+            ...b,
+            comments: b.comments.filter((c) => c.idComment !== commentId),
+            commentsCount: b.commentsCount - 1,
+          };
+        }
+        return b;
+      };
+
+      setBlogs(blogs().map(updateBlogComments));
+      setSelectedBlog(updateBlogComments(blog));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete comment");
+      throw err;
+    }
+  };
+
   const openBlog = async (blog: BlogPost) => {
     try {
       const fullBlog = await blogApi.getBlog(blog.idBlog);
@@ -174,6 +260,10 @@ const Blogs: Component = () => {
             onClose={closeBlog}
             onLike={handleLike}
             onAddComment={handleAddComment}
+            onUpdateBlog={handleUpdateBlog}
+            onDeleteBlog={handleDeleteBlog}
+            onUpdateComment={handleUpdateComment}
+            onDeleteComment={handleDeleteComment}
           />
         </Show>
       </Show>

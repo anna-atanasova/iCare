@@ -103,4 +103,25 @@ public class BlogController {
         CommentDTO comment = commentService.createComment(id, request, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(comment);
     }
+
+    @PutMapping("/comments/{commentId}")
+    public ResponseEntity<CommentDTO> updateComment(
+            @PathVariable Integer commentId,
+            @RequestBody CreateCommentRequest request,
+            Authentication authentication
+    ) {
+        Integer userId = getUserId(authentication);
+        CommentDTO updatedComment = commentService.updateComment(commentId, request.getContent(), userId);
+        return ResponseEntity.ok(updatedComment);
+    }
+
+    @DeleteMapping("/comments/{commentId}")
+    public ResponseEntity<Void> deleteComment(
+            @PathVariable Integer commentId,
+            Authentication authentication
+    ) {
+        Integer userId = getUserId(authentication);
+        commentService.deleteComment(commentId, userId);
+        return ResponseEntity.noContent().build();
+    }
 }

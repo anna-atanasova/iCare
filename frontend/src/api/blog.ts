@@ -133,4 +133,40 @@ export const blogApi = {
 
     return response.json();
   },
+
+  updateComment: async (
+    commentId: number,
+    content: string,
+  ): Promise<Comment> => {
+    const response = await fetch(
+      `${API_BASE_URL}/blogs/comments/${commentId}`,
+      {
+        method: "PUT",
+        headers: getAuthHeaderJson(),
+        body: JSON.stringify({ content }),
+      },
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to update comment");
+    }
+
+    return response.json();
+  },
+
+  deleteComment: async (commentId: number): Promise<void> => {
+    const response = await fetch(
+      `${API_BASE_URL}/blogs/comments/${commentId}`,
+      {
+        method: "DELETE",
+        headers: getAuthHeader(),
+      },
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to delete comment");
+    }
+  },
 };

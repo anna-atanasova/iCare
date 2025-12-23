@@ -43,6 +43,34 @@ public class CommentService {
         return convertToDTO(savedComment);
     }
 
+    @Transactional
+    public CommentDTO updateComment(Integer commentId, String content, Integer patientId) {
+        Comment comment = commentRepository
+                .findById(commentId)
+                .orElseThrow(() -> ICareException.notFound("Comment not found with id: " + commentId));
+
+        if (!comment.getPatient().getIdUser().equals(patientId)) {
+            throw ICareException.forbidden("You are not authorized to update this comment");
+        }
+
+        comment.setContent(content);
+        Comment updatedComment = commentRepository.save(comment);
+        return convertToDTO(updatedComment);
+    }
+
+    @Transactional
+    public void deleteComment(Integer commentId, Integer patientId) {
+        Comment comment = commentRepository
+                .findById(commentId)
+                .orElseThrow(() -> ICareException.notFound("Comment not found with id: " + commentId));
+
+        if (!comment.getPatient().getIdUser().equals(patientId)) {
+            throw ICareException.forbidden("You are not authorized to delete this comment");
+        }
+
+        commentRepository.delete(comment);
+    }
+
     public CommentDTO convertToDTO(Comment comment) {
         CommentDTO dto = new CommentDTO();
         dto.setIdComment(comment.getIdComment());
