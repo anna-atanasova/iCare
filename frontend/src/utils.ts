@@ -21,3 +21,9 @@ export const formatDateTime = (dateString: string) =>
     hour: "2-digit",
     minute: "2-digit",
   });
+
+export const getMonthName = (year: number, month: number) =>
+  new Date(year, month - 1, 1).toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });

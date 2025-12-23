@@ -38,6 +38,13 @@ const Header: Component = () => {
               >
                 Therapists
               </A>
+              <A
+                href="/diary"
+                class="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                activeClass="text-blue-600"
+              >
+                Diary
+              </A>
             </Show>
 
             <Show

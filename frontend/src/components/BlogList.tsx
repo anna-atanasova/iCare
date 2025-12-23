@@ -15,7 +15,7 @@ const BlogList: Component<BlogListProps> = (props) => (
   <>
     <Show when={props.loading}>
       <div class="text-center py-12">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
         <p class="mt-2 text-gray-600">Loading blogs...</p>
       </div>
     </Show>
