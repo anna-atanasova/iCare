@@ -2,6 +2,7 @@ import { Component, Show } from "solid-js";
 import { A } from "@solidjs/router";
 import { useAuth } from "../context/AuthContext";
 import UserMenu from "./UserMenu";
+import logo from "../../assets/icare.png";
 
 const Header: Component = () => {
   const { isAuthenticated, user } = useAuth();
@@ -11,7 +12,10 @@ const Header: Component = () => {
       <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
           <div class="flex items-center">
-            <h1 class="text-2xl font-bold text-blue-600">iCare</h1>
+            <A href="/" class="flex items-center gap-2">
+              <img src={logo} alt="iCare" class="h-10 w-auto" />
+              <h1 class="text-2xl font-bold text-blue-600">iCare</h1>
+            </A>
           </div>
 
           <div class="flex items-center gap-6">
