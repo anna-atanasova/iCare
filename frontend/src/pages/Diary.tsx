@@ -12,7 +12,8 @@ import CalendarHeader from "../components/CalendarHeader";
 import DayHeaders from "../components/DayHeaders";
 import CalendarGrid from "../components/CalendarGrid";
 import RatingLegend from "../components/RatingLegend";
-import { getMonthName } from "../utils";
+import DiaryModal from "../components/DiaryModal";
+import { getMonthName, dateToString, getTodayString } from "../utils";
 
 const Diary: Component = () => {
   const { user, isAuthenticated } = useAuth();
@@ -21,8 +22,15 @@ const Diary: Component = () => {
   const now = new Date();
   const [currentYear, setCurrentYear] = createSignal(now.getFullYear());
   const [currentMonth, setCurrentMonth] = createSignal(now.getMonth() + 1);
+  const [isModalOpen, setIsModalOpen] = createSignal(false);
+  const [selectedDateStr, setSelectedDateStr] = createSignal<string | null>(
+    null,
+  );
+  const [selectedEntry, setSelectedEntry] = createSignal<
+    DiaryEntry | undefined
+  >(undefined);
 
-  const [diaryEntries] = createResource(
+  const [diaryEntries, { refetch }] = createResource(
     () => ({
       authenticated: isAuthenticated(),
       userId: user()?.userId,
@@ -47,6 +55,7 @@ const Diary: Component = () => {
     }
 
     const currentUser = user();
+    // TODO show a list of patients if user is a therapist
     if (currentUser?.userType !== "PATIENT") {
       navigate("/", { replace: true });
     }
@@ -103,20 +112,79 @@ const Diary: Component = () => {
 
   const getEntryForDate = (date: Date | null): DiaryEntry | undefined => {
     if (!date || !diaryEntries()) return undefined;
-    const dateStr = date.toISOString().split("T")[0];
+    const dateStr = dateToString(date);
     return diaryEntries()!.find((entry) => entry.date === dateStr);
   };
 
+  const isToday = (dateStr: string): boolean => dateStr === getTodayString();
+
   const handleDayClick = (date: Date | null) => {
     if (!date) return;
+
+    const dateStr = dateToString(date);
     const entry = getEntryForDate(date);
-    if (entry) {
-      console.log("Diary entry clicked:", entry);
-      // TODO: Open modal to view/edit entry
-    } else {
-      console.log("No entry for this date, could create one");
-      // TODO: Open modal to create entry
+
+    if (!entry && !isToday(dateStr)) {
+      return;
     }
+
+    setSelectedDateStr(dateStr);
+    setSelectedEntry(entry);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveEntry = async (rating: number, content: string) => {
+    const dateStr = selectedDateStr();
+    if (!dateStr) return;
+
+    const entry = selectedEntry();
+
+    if (entry) {
+      const updateData: { content: string; dailyRating?: number } = { content };
+
+      if (isToday(dateStr)) {
+        updateData.dailyRating = rating;
+      }
+
+      await diaryApi.updateDiaryEntry(entry.idDiary, updateData);
+    } else {
+      await diaryApi.createDiaryEntry({
+        dailyRating: rating,
+        content,
+      });
+    }
+
+    refetch();
+    setIsModalOpen(false);
+    setSelectedDateStr(null);
+    setSelectedEntry(undefined);
+  };
+
+  const handleDeleteEntry = async () => {
+    const entry = selectedEntry();
+    if (!entry) return;
+
+    await diaryApi.deleteDiaryEntry(entry.idDiary);
+
+    refetch();
+    setIsModalOpen(false);
+    setSelectedDateStr(null);
+    setSelectedEntry(undefined);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedDateStr(null);
+    setSelectedEntry(undefined);
+  };
+
+  const getSelectedDate = (): Date | null => {
+    const dateStr = selectedDateStr();
+    if (!dateStr) return null;
+
+    const [year, month, day] = dateStr.split("-").map(Number);
+
+    return new Date(year, month - 1, day);
   };
 
   return (
@@ -150,6 +218,18 @@ const Diary: Component = () => {
         </Show>
         <RatingLegend />
       </div>
+
+      <Show when={selectedDateStr() && getSelectedDate()}>
+        <DiaryModal
+          isOpen={isModalOpen()}
+          onClose={handleCloseModal}
+          entry={selectedEntry()}
+          date={getSelectedDate()!}
+          onSave={handleSaveEntry}
+          onDelete={handleDeleteEntry}
+          isToday={isToday(selectedDateStr()!)}
+        />
+      </Show>
     </div>
   );
 };

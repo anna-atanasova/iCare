@@ -27,4 +27,8 @@ public class ICareException extends RuntimeException {
     public static ICareException badRequest(String message) {
         return new ICareException(message, HttpStatus.BAD_REQUEST);
     }
+
+    public static ICareException conflict(String message) {
+        return new ICareException(message, HttpStatus.CONFLICT);
+    }
 }

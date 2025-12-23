@@ -1,11 +1,11 @@
-export const formatDate = (dateString: string) =>
+export const formatDate = (dateString: string | Date) =>
   new Date(dateString).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
 
-export const formatDateWithWeekday = (dateString: string) =>
+export const formatDateWithWeekday = (dateString: string | Date) =>
   new Date(dateString).toLocaleDateString("en-US", {
     weekday: "short",
     year: "numeric",
@@ -13,7 +13,15 @@ export const formatDateWithWeekday = (dateString: string) =>
     day: "numeric",
   });
 
-export const formatDateTime = (dateString: string) =>
+export const formatDateWithLongWeekday = (dateString: string | Date) =>
+  new Date(dateString).toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+export const formatDateTime = (dateString: string | Date) =>
   new Date(dateString).toLocaleString("en-US", {
     year: "numeric",
     month: "short",
@@ -27,3 +35,13 @@ export const getMonthName = (year: number, month: number) =>
     month: "long",
     year: "numeric",
   });
+
+export const dateToString = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
+export const getTodayString = (): string => dateToString(new Date());
