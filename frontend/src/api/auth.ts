@@ -36,7 +36,14 @@ export const authApi = {
   },
 };
 
-export const getAuthHeader = (): Record<string, string> => {
+export const getAuthHeader = (): HeadersInit => {
   const token = localStorage.getItem("token");
   return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
+export const getAuthHeaderJson = (): HeadersInit => {
+  return {
+    ...getAuthHeader(),
+    "Content-Type": "application/json",
+  };
 };

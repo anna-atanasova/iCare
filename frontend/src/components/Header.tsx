@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import UserMenu from "./UserMenu";
 
 const Header: Component = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   return (
     <header class="bg-white shadow-sm border-b border-gray-200">
@@ -22,6 +22,16 @@ const Header: Component = () => {
             >
               Home
             </A>
+
+            <Show when={isAuthenticated() && user()?.userType === "PATIENT"}>
+              <A
+                href="/blogs"
+                class="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                activeClass="text-blue-600"
+              >
+                Blogs
+              </A>
+            </Show>
 
             <Show
               when={isAuthenticated()}

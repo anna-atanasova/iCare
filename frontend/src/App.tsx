@@ -4,6 +4,7 @@ import { AuthProvider } from "./context/AuthContext";
 import Header from "./components/Header";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Blogs from "./pages/Blogs";
 
 const App: Component = () => (
   <AuthProvider>
@@ -17,6 +18,7 @@ const App: Component = () => (
     >
       <Route path="/" component={Home} />
       <Route path="/login" component={Login} />
+      <Route path="/blogs" component={Blogs} />
     </Router>
   </AuthProvider>
 );
