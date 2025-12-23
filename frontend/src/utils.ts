@@ -5,6 +5,14 @@ export const formatDate = (dateString: string) =>
     day: "numeric",
   });
 
+export const formatDateWithWeekday = (dateString: string) =>
+  new Date(dateString).toLocaleDateString("en-US", {
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+
 export const formatDateTime = (dateString: string) =>
   new Date(dateString).toLocaleString("en-US", {
     year: "numeric",

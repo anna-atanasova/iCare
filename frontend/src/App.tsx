@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Blogs from "./pages/Blogs";
+import Therapists from "./pages/Therapists";
 
 const App: Component = () => (
   <AuthProvider>
@@ -19,6 +20,7 @@ const App: Component = () => (
       <Route path="/" component={Home} />
       <Route path="/login" component={Login} />
       <Route path="/blogs" component={Blogs} />
+      <Route path="/therapists" component={Therapists} />
     </Router>
   </AuthProvider>
 );

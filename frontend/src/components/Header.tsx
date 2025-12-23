@@ -31,6 +31,13 @@ const Header: Component = () => {
               >
                 Blogs
               </A>
+              <A
+                href="/therapists"
+                class="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                activeClass="text-blue-600"
+              >
+                Therapists
+              </A>
             </Show>
 
             <Show
