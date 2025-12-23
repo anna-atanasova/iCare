@@ -14,6 +14,7 @@ const Blogs: Component = () => {
   const [error, setError] = createSignal("");
   const [showCreateForm, setShowCreateForm] = createSignal(false);
   const [selectedBlog, setSelectedBlog] = createSignal<BlogPost | null>(null);
+  const [editMode, setEditMode] = createSignal(false);
 
   createEffect(() => {
     if (!isAuthenticated()) {
@@ -207,17 +208,45 @@ const Blogs: Component = () => {
     try {
       const fullBlog = await blogApi.getBlog(blog.idBlog);
       setSelectedBlog(fullBlog);
+      setEditMode(false);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to load blog details",
       );
 
       setSelectedBlog(blog);
+      setEditMode(false);
+    }
+  };
+
+  const openBlogInEditMode = async (blog: BlogPost) => {
+    try {
+      const fullBlog = await blogApi.getBlog(blog.idBlog);
+      setSelectedBlog(fullBlog);
+      setEditMode(true);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to load blog details",
+      );
+
+      setSelectedBlog(blog);
+      setEditMode(true);
+    }
+  };
+
+  const handleQuickDelete = async (blogId: number) => {
+    try {
+      await blogApi.deleteBlog(blogId);
+      await loadBlogs();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete blog");
+      throw err;
     }
   };
 
   const closeBlog = () => {
     setSelectedBlog(null);
+    setEditMode(false);
   };
 
   return (
@@ -252,6 +281,8 @@ const Blogs: Component = () => {
           loading={loading()}
           openBlog={openBlog}
           onLike={handleLike}
+          onEdit={openBlogInEditMode}
+          onDelete={handleQuickDelete}
         />
 
         <Show when={selectedBlog()}>
@@ -264,6 +295,7 @@ const Blogs: Component = () => {
             onDeleteBlog={handleDeleteBlog}
             onUpdateComment={handleUpdateComment}
             onDeleteComment={handleDeleteComment}
+            initialEditMode={editMode()}
           />
         </Show>
       </Show>

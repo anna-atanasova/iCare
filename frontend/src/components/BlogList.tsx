@@ -7,6 +7,8 @@ interface BlogListProps {
   loading: boolean;
   openBlog: (blog: BlogPost) => void;
   onLike: (blogId: number) => void;
+  onEdit: (blog: BlogPost) => void;
+  onDelete: (blogId: number) => void;
 }
 
 const BlogList: Component<BlogListProps> = (props) => (
@@ -31,6 +33,8 @@ const BlogList: Component<BlogListProps> = (props) => (
             blog={blog}
             openBlog={props.openBlog}
             onLike={props.onLike}
+            onEdit={props.onEdit}
+            onDelete={props.onDelete}
           />
         )}
       </For>

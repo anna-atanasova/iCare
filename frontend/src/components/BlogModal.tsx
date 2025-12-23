@@ -1,4 +1,4 @@
-import { Component, createSignal, Show } from "solid-js";
+import { Component, createSignal, createEffect, Show } from "solid-js";
 import { BlogPost } from "../api/blog";
 import CommentSection from "./CommentSection";
 import { formatDate } from "../utils";
@@ -17,6 +17,7 @@ interface BlogModalProps {
   onDeleteBlog?: (blogId: number) => Promise<void>;
   onUpdateComment?: (commentId: number, content: string) => Promise<void>;
   onDeleteComment?: (commentId: number) => Promise<void>;
+  initialEditMode?: boolean;
 }
 
 const BlogModal: Component<BlogModalProps> = (props) => {
@@ -26,6 +27,14 @@ const BlogModal: Component<BlogModalProps> = (props) => {
   const [editContent, setEditContent] = createSignal("");
 
   const isOwner = () => user()?.userId === props.blog?.patientId;
+
+  createEffect(() => {
+    if (props.initialEditMode && props.blog) {
+      setEditTitle(props.blog.title || "");
+      setEditContent(props.blog.content || "");
+      setIsEditing(true);
+    }
+  });
 
   const startEdit = () => {
     setEditTitle(props.blog?.title || "");
