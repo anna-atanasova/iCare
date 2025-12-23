@@ -1,11 +1,8 @@
 package com.finki.icare.controller;
 
-import com.finki.icare.dto.ErrorResponse;
 import com.finki.icare.dto.LoginRequest;
 import com.finki.icare.dto.LoginResponse;
-import com.finki.icare.exceptions.ICareException;
 import com.finki.icare.service.AuthService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,19 +18,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        try {
-            LoginResponse response = authService.login(request);
-
-            return ResponseEntity.ok(response);
-        } catch (ICareException e) {
-            return ResponseEntity
-                    .status(e.getStatus())
-                    .body(new ErrorResponse(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("An error occurred during login."));
-        }
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+        LoginResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
     }
 }

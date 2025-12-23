@@ -3,7 +3,6 @@ package com.finki.icare.controller;
 import com.finki.icare.config.JwtAuthenticationToken;
 import com.finki.icare.dto.*;
 import com.finki.icare.exceptions.ICareException;
-import com.finki.icare.repository.PatientRepository;
 import com.finki.icare.service.BlogService;
 import com.finki.icare.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,6 @@ public class BlogController {
 
     private final BlogService blogService;
     private final CommentService commentService;
-    private final PatientRepository patientRepository;
 
     private Integer getUserId(Authentication authentication) {
         if (authentication instanceof JwtAuthenticationToken jwtAuth) {
@@ -32,142 +30,77 @@ public class BlogController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllBlogs(Authentication authentication) {
-        try {
-            Integer currentUserId = getUserId(authentication);
-
-            List<BlogDTO> blogs = blogService.getAllBlogs(currentUserId);
-            return ResponseEntity.ok(blogs);
-        } catch (Exception e) {
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<List<BlogDTO>> getAllBlogs(Authentication authentication) {
+        Integer currentUserId = getUserId(authentication);
+        List<BlogDTO> blogs = blogService.getAllBlogs(currentUserId);
+        return ResponseEntity.ok(blogs);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getBlogById(
+    public ResponseEntity<BlogDTO> getBlogById(
             @PathVariable Integer id,
             Authentication authentication
     ) {
-        try {
-            Integer userId = getUserId(authentication);
 
-            BlogDTO blog = blogService.getBlogById(id, userId);
-            return ResponseEntity.ok(blog);
-        } catch (ICareException e) {
-
-            return ResponseEntity.status(e.getStatus())
-                    .body(new ErrorResponse(e.getMessage()));
-        } catch (Exception e) {
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("An error occurred"));
-        }
+        Integer userId = getUserId(authentication);
+        BlogDTO blog = blogService.getBlogById(id, userId);
+        return ResponseEntity.ok(blog);
     }
 
     @PostMapping
-    public ResponseEntity<?> createBlog(
+    public ResponseEntity<BlogDTO> createBlog(
             @RequestBody CreateBlogRequest request,
             Authentication authentication
     ) {
-        try {
-            Integer userId = getUserId(authentication);
-            BlogDTO createdBlog = blogService.createBlog(request, userId);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdBlog);
-        } catch (ICareException e) {
-
-            return ResponseEntity.status(e.getStatus())
-                    .body(new ErrorResponse(e.getMessage()));
-        } catch (Exception e) {
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("An error occurred while creating the blog"));
-        }
+        Integer userId = getUserId(authentication);
+        BlogDTO createdBlog = blogService.createBlog(request, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdBlog);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateBlog(
+    public ResponseEntity<BlogDTO> updateBlog(
             @PathVariable Integer id,
             @RequestBody UpdateBlogRequest request,
             Authentication authentication
     ) {
-        try {
-            Integer userId = getUserId(authentication);
-            BlogDTO updatedBlog = blogService.updateBlog(id, request, userId);
 
-            return ResponseEntity.ok(updatedBlog);
-        } catch (ICareException e) {
-
-            return ResponseEntity.status(e.getStatus())
-                    .body(new ErrorResponse(e.getMessage()));
-        } catch (Exception e) {
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("An error occurred while updating the blog"));
-        }
+        Integer userId = getUserId(authentication);
+        BlogDTO updatedBlog = blogService.updateBlog(id, request, userId);
+        return ResponseEntity.ok(updatedBlog);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteBlog(
+    public ResponseEntity<Void> deleteBlog(
             @PathVariable Integer id,
             Authentication authentication
     ) {
-        try {
-            Integer userId = getUserId(authentication);
-            blogService.deleteBlog(id, userId);
 
-            return ResponseEntity.noContent().build();
-        } catch (ICareException e) {
-
-            return ResponseEntity.status(e.getStatus())
-                    .body(new ErrorResponse(e.getMessage()));
-        } catch (Exception e) {
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("An error occurred while deleting the blog"));
-        }
+        Integer userId = getUserId(authentication);
+        blogService.deleteBlog(id, userId);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/like")
-    public ResponseEntity<?> toggleLike(
+    public ResponseEntity<Void> toggleLike(
             @PathVariable Integer id,
             Authentication authentication
     ) {
-        try {
-            Integer userId = getUserId(authentication);
-            blogService.toggleLike(id, userId);
 
-            return ResponseEntity.ok().build();
-        } catch (ICareException e) {
-
-            return ResponseEntity.status(e.getStatus())
-                    .body(new ErrorResponse(e.getMessage()));
-        } catch (Exception e) {
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("An error occurred while toggling like"));
-        }
+        Integer userId = getUserId(authentication);
+        blogService.toggleLike(id, userId);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/comments")
-    public ResponseEntity<?> addComment(
+    public ResponseEntity<CommentDTO> addComment(
             @PathVariable Integer id,
             @RequestBody CreateCommentRequest request,
-            Authentication authentication) {
-        try {
-            Integer userId = getUserId(authentication);
-            CommentDTO comment = commentService.createComment(id, request, userId);
+            Authentication authentication
+    ) {
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(comment);
-        } catch (ICareException e) {
-
-            return ResponseEntity.status(e.getStatus())
-                    .body(new ErrorResponse(e.getMessage()));
-        } catch (Exception e) {
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("An error occurred while adding comment"));
-        }
+        Integer userId = getUserId(authentication);
+        CommentDTO comment = commentService.createComment(id, request, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(comment);
     }
 }
