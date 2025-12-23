@@ -1,4 +1,10 @@
-import { Component, createEffect, createSignal, onMount, Show } from "solid-js";
+import {
+  Component,
+  createEffect,
+  createSignal,
+  createResource,
+  Show,
+} from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { useAuth } from "../context/AuthContext";
 import { blogApi, BlogPost } from "../api/blog";
@@ -9,12 +15,22 @@ import CreateBlogForm from "../components/CreateBlogForm";
 const Blogs: Component = () => {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [blogs, setBlogs] = createSignal<BlogPost[]>([]);
-  const [loading, setLoading] = createSignal(true);
-  const [error, setError] = createSignal("");
   const [showCreateForm, setShowCreateForm] = createSignal(false);
-  const [selectedBlog, setSelectedBlog] = createSignal<BlogPost | null>(null);
+  const [selectedBlogId, setSelectedBlogId] = createSignal<number | null>(null);
   const [editMode, setEditMode] = createSignal(false);
+
+  const [blogs, { refetch: refetchBlogs }] = createResource(async () => {
+    if (!isAuthenticated()) return [];
+    return await blogApi.getAllBlogs();
+  });
+
+  const [selectedBlog, { refetch: refetchSelectedBlog }] = createResource(
+    selectedBlogId,
+    async (id) => {
+      if (!id) return null;
+      return await blogApi.getBlog(id);
+    },
+  );
 
   createEffect(() => {
     if (!isAuthenticated()) {
@@ -28,66 +44,19 @@ const Blogs: Component = () => {
     }
   });
 
-  onMount(() => {
-    loadBlogs();
-  });
-
-  const loadBlogs = async () => {
-    try {
-      setLoading(true);
-      setError("");
-      const data = await blogApi.getAllBlogs();
-      setBlogs(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load blogs");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleCreateBlog = async (title: string, content: string) => {
-    try {
-      setError("");
-      await blogApi.createBlog({ title, content });
-      setShowCreateForm(false);
-      await loadBlogs();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create blog");
-      throw err;
-    }
+    await blogApi.createBlog({ title, content });
+    setShowCreateForm(false);
+    refetchBlogs();
   };
 
   const handleLike = async (blogId: number) => {
     try {
-      const updateBlogLike = (blog: BlogPost) => {
-        if (blog.idBlog === blogId) {
-          return {
-            ...blog,
-            likedByCurrentUser: !blog.likedByCurrentUser,
-            likesCount: blog.likedByCurrentUser
-              ? blog.likesCount - 1
-              : blog.likesCount + 1,
-          };
-        }
-        return blog;
-      };
-
-      setBlogs(blogs().map(updateBlogLike));
-
-      if (selectedBlog() && selectedBlog()?.idBlog === blogId) {
-        setSelectedBlog(updateBlogLike(selectedBlog()!));
-      }
-
       await blogApi.toggleLike(blogId);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to toggle like");
-      await loadBlogs();
-
-      if (selectedBlog()) {
-        const updatedBlog = blogs().find((b) => b.idBlog === blogId);
-        if (updatedBlog) {
-          setSelectedBlog(updatedBlog);
-        }
+    } finally {
+      refetchBlogs();
+      if (selectedBlogId() === blogId) {
+        refetchSelectedBlog();
       }
     }
   };
@@ -96,26 +65,9 @@ const Blogs: Component = () => {
     const blog = selectedBlog();
     if (!blog) return;
 
-    try {
-      const newCommentData = await blogApi.addComment(blog.idBlog, content);
-
-      const updateBlogComments = (b: BlogPost) => {
-        if (b.idBlog === blog.idBlog) {
-          return {
-            ...b,
-            comments: [...b.comments, newCommentData],
-            commentsCount: b.commentsCount + 1,
-          };
-        }
-        return b;
-      };
-
-      setBlogs(blogs().map(updateBlogComments));
-      setSelectedBlog(updateBlogComments(blog));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to add comment");
-      throw err;
-    }
+    await blogApi.addComment(blog.idBlog, content);
+    refetchBlogs();
+    refetchSelectedBlog();
   };
 
   const handleUpdateBlog = async (
@@ -123,129 +75,50 @@ const Blogs: Component = () => {
     title: string,
     content: string,
   ) => {
-    try {
-      await blogApi.updateBlog(blogId, { title, content });
-      await loadBlogs();
-
-      if (selectedBlog()?.idBlog === blogId) {
-        const updatedBlog = await blogApi.getBlog(blogId);
-        setSelectedBlog(updatedBlog);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update blog");
-      throw err;
+    await blogApi.updateBlog(blogId, { title, content });
+    refetchBlogs();
+    if (selectedBlogId() === blogId) {
+      refetchSelectedBlog();
     }
   };
 
   const handleDeleteBlog = async (blogId: number) => {
-    try {
-      await blogApi.deleteBlog(blogId);
-      await loadBlogs();
-
-      if (selectedBlog()?.idBlog === blogId) {
-        setSelectedBlog(null);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete blog");
-      throw err;
+    await blogApi.deleteBlog(blogId);
+    if (selectedBlogId() === blogId) {
+      closeBlog();
     }
+    refetchBlogs();
   };
 
   const handleUpdateComment = async (commentId: number, content: string) => {
-    const blog = selectedBlog();
-    if (!blog) return;
-
-    try {
-      const updatedComment = await blogApi.updateComment(commentId, content);
-
-      const updateBlogComments = (b: BlogPost) => {
-        if (b.idBlog === blog.idBlog) {
-          return {
-            ...b,
-            comments: b.comments.map((c) =>
-              c.idComment === commentId ? updatedComment : c,
-            ),
-          };
-        }
-        return b;
-      };
-
-      setBlogs(blogs().map(updateBlogComments));
-      setSelectedBlog(updateBlogComments(blog));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update comment");
-      throw err;
-    }
+    await blogApi.updateComment(commentId, content);
+    refetchBlogs();
+    refetchSelectedBlog();
   };
 
   const handleDeleteComment = async (commentId: number) => {
-    const blog = selectedBlog();
-    if (!blog) return;
-
-    try {
-      await blogApi.deleteComment(commentId);
-
-      const updateBlogComments = (b: BlogPost) => {
-        if (b.idBlog === blog.idBlog) {
-          return {
-            ...b,
-            comments: b.comments.filter((c) => c.idComment !== commentId),
-            commentsCount: b.commentsCount - 1,
-          };
-        }
-        return b;
-      };
-
-      setBlogs(blogs().map(updateBlogComments));
-      setSelectedBlog(updateBlogComments(blog));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete comment");
-      throw err;
-    }
+    await blogApi.deleteComment(commentId);
+    refetchBlogs();
+    refetchSelectedBlog();
   };
 
-  const openBlog = async (blog: BlogPost) => {
-    try {
-      const fullBlog = await blogApi.getBlog(blog.idBlog);
-      setSelectedBlog(fullBlog);
-      setEditMode(false);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to load blog details",
-      );
-
-      setSelectedBlog(blog);
-      setEditMode(false);
-    }
+  const openBlog = (blog: BlogPost) => {
+    setSelectedBlogId(blog.idBlog);
+    setEditMode(false);
   };
 
-  const openBlogInEditMode = async (blog: BlogPost) => {
-    try {
-      const fullBlog = await blogApi.getBlog(blog.idBlog);
-      setSelectedBlog(fullBlog);
-      setEditMode(true);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to load blog details",
-      );
-
-      setSelectedBlog(blog);
-      setEditMode(true);
-    }
+  const openBlogInEditMode = (blog: BlogPost) => {
+    setSelectedBlogId(blog.idBlog);
+    setEditMode(true);
   };
 
   const handleQuickDelete = async (blogId: number) => {
-    try {
-      await blogApi.deleteBlog(blogId);
-      await loadBlogs();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete blog");
-      throw err;
-    }
+    await blogApi.deleteBlog(blogId);
+    refetchBlogs();
   };
 
   const closeBlog = () => {
-    setSelectedBlog(null);
+    setSelectedBlogId(null);
     setEditMode(false);
   };
 
@@ -261,43 +134,42 @@ const Blogs: Component = () => {
         </button>
       </div>
 
-      <Show
-        when={!error()}
-        fallback={
-          <div class="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-md">
-            {error()}
-          </div>
-        }
-      >
-        <Show when={showCreateForm()}>
-          <CreateBlogForm
-            onSubmit={handleCreateBlog}
-            onCancel={() => setShowCreateForm(false)}
-          />
-        </Show>
+      <Show when={blogs.error}>
+        <div class="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-md">
+          {blogs.error instanceof Error
+            ? blogs.error.message
+            : "Failed to load blogs"}
+        </div>
+      </Show>
 
-        <BlogList
-          blogs={blogs()}
-          loading={loading()}
-          openBlog={openBlog}
-          onLike={handleLike}
-          onEdit={openBlogInEditMode}
-          onDelete={handleQuickDelete}
+      <Show when={showCreateForm()}>
+        <CreateBlogForm
+          onSubmit={handleCreateBlog}
+          onCancel={() => setShowCreateForm(false)}
         />
+      </Show>
 
-        <Show when={selectedBlog()}>
-          <BlogModal
-            blog={selectedBlog()!}
-            onClose={closeBlog}
-            onLike={handleLike}
-            onAddComment={handleAddComment}
-            onUpdateBlog={handleUpdateBlog}
-            onDeleteBlog={handleDeleteBlog}
-            onUpdateComment={handleUpdateComment}
-            onDeleteComment={handleDeleteComment}
-            initialEditMode={editMode()}
-          />
-        </Show>
+      <BlogList
+        blogs={blogs() || []}
+        loading={blogs.loading}
+        openBlog={openBlog}
+        onLike={handleLike}
+        onEdit={openBlogInEditMode}
+        onDelete={handleQuickDelete}
+      />
+
+      <Show when={selectedBlogId() && selectedBlog()}>
+        <BlogModal
+          blog={selectedBlog()!}
+          onClose={closeBlog}
+          onLike={handleLike}
+          onAddComment={handleAddComment}
+          onUpdateBlog={handleUpdateBlog}
+          onDeleteBlog={handleDeleteBlog}
+          onUpdateComment={handleUpdateComment}
+          onDeleteComment={handleDeleteComment}
+          initialEditMode={editMode()}
+        />
       </Show>
     </div>
   );
