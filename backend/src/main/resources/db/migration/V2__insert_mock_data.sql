@@ -1,4 +1,5 @@
 -- V2: Insert mock data for mental health app
+SET search_path = project, public;
 
 -- ========== INSERT USERS ==========
 -- Insert base users (therapists and patients)

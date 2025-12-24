@@ -1,3 +1,6 @@
+CREATE SCHEMA IF NOT EXISTS project;
+SET search_path = project, public;
+
 -- ========== TABLES ==========
 
 -- USER
