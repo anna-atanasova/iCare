@@ -34,7 +34,13 @@ public class DiaryService {
         List<Diary> diaries = diaryRepository.findByPatientIdAndDateRange(patientId, startDate, endDate);
 
         return diaries.stream()
-                .map(diaryMapper::toDTO)
+                .map(diary -> {
+                    DiaryEntryDTO dto = diaryMapper.toDTO(diary);
+                    if ("THERAPIST".equals(userType)) {
+                        dto.setContent(null);
+                    }
+                    return dto;
+                })
                 .toList();
     }
 

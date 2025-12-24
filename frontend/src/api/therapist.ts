@@ -14,6 +14,13 @@ export interface TherapistInfo {
   freeConsultationSlots: string[];
 }
 
+export interface Patient {
+  userId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
 export const therapistApi = {
   getAllTherapists: async (): Promise<TherapistInfo[]> => {
     const response = await fetch(`${API_BASE_URL}/therapists`, {
@@ -23,6 +30,19 @@ export const therapistApi = {
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || "Failed to fetch therapists");
+    }
+
+    return response.json();
+  },
+
+  getTherapistPatients: async (): Promise<Patient[]> => {
+    const response = await fetch(`${API_BASE_URL}/therapists/patients`, {
+      headers: getAuthHeader(),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to fetch patients");
     }
 
     return response.json();

@@ -59,6 +59,13 @@ const Header: Component = () => {
               >
                 Consultation Slots
               </A>
+              <A
+                href="/diary"
+                class="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                activeClass="text-blue-600"
+              >
+                Patient Diaries
+              </A>
             </Show>
 
             <Show

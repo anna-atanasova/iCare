@@ -4,10 +4,12 @@ import {
   createResource,
   createSignal,
   Show,
+  For,
 } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { useAuth } from "../context/AuthContext";
 import { diaryApi, DiaryEntry } from "../api/diary";
+import { therapistApi } from "../api/therapist";
 import CalendarHeader from "../components/CalendarHeader";
 import DayHeaders from "../components/DayHeaders";
 import CalendarGrid from "../components/CalendarGrid";
@@ -30,10 +32,38 @@ const Diary: Component = () => {
     DiaryEntry | undefined
   >(undefined);
 
+  const [selectedPatientId, setSelectedPatientId] = createSignal<number | null>(
+    null,
+  );
+  const isTherapist = () => user()?.userType === "THERAPIST";
+
+  const [patients] = createResource(
+    () => ({
+      authenticated: isAuthenticated(),
+      isTherapist: isTherapist(),
+    }),
+    async (params) => {
+      if (!params.authenticated || !params.isTherapist) return [];
+      return await therapistApi.getTherapistPatients();
+    },
+  );
+
+  createEffect(() => {
+    const patientList = patients();
+    if (
+      isTherapist() &&
+      patientList &&
+      patientList.length > 0 &&
+      selectedPatientId() === null
+    ) {
+      setSelectedPatientId(patientList[0].userId);
+    }
+  });
+
   const [diaryEntries, { refetch }] = createResource(
     () => ({
       authenticated: isAuthenticated(),
-      userId: user()?.userId,
+      userId: isTherapist() ? selectedPatientId() : user()?.userId,
       year: currentYear(),
       month: currentMonth(),
     }),
@@ -52,12 +82,6 @@ const Diary: Component = () => {
     if (!isAuthenticated()) {
       navigate("/login", { replace: true });
       return;
-    }
-
-    const currentUser = user();
-    // TODO show a list of patients if user is a therapist
-    if (currentUser?.userType !== "PATIENT") {
-      navigate("/", { replace: true });
     }
   });
 
@@ -119,7 +143,7 @@ const Diary: Component = () => {
   const isToday = (dateStr: string): boolean => dateStr === getTodayString();
 
   const handleDayClick = (date: Date | null) => {
-    if (!date) return;
+    if (isTherapist() || !date) return;
 
     const dateStr = dateToString(date);
     const entry = getEntryForDate(date);
@@ -190,9 +214,52 @@ const Diary: Component = () => {
   return (
     <div class="container mx-auto px-4 py-8">
       <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">My Diary</h1>
-        <p class="text-gray-600">Track your daily thoughts and feelings</p>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">
+          {isTherapist() ? "Patient Diaries" : "My Diary"}
+        </h1>
+        <p class="text-gray-600">
+          {isTherapist()
+            ? "View your patients' daily thoughts and feelings"
+            : "Track your daily thoughts and feelings"}
+        </p>
       </div>
+
+      <Show when={isTherapist()}>
+        <div class="mb-6">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            Select Patient
+          </label>
+          <Show
+            when={!patients.loading}
+            fallback={
+              <div class="flex items-center gap-2 text-gray-500">
+                <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600" />
+                <span>Loading patients...</span>
+              </div>
+            }
+          >
+            <select
+              value={selectedPatientId() || ""}
+              onChange={(e) => {
+                const value = e.currentTarget.value;
+                setSelectedPatientId(value ? Number(value) : null);
+              }}
+              class="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <Show when={!patients() || patients()!.length === 0}>
+                <option value="">No patients assigned</option>
+              </Show>
+              <For each={patients()}>
+                {(patient) => (
+                  <option value={patient.userId}>
+                    {patient.firstName} {patient.lastName} ({patient.email})
+                  </option>
+                )}
+              </For>
+            </select>
+          </Show>
+        </div>
+      </Show>
 
       <div class="bg-white rounded-lg shadow-lg p-6">
         <CalendarHeader
