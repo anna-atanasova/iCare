@@ -8,6 +8,7 @@ import Blogs from "./pages/Blogs";
 import Therapists from "./pages/Therapists";
 import Diary from "./pages/Diary";
 import ConsultationSlots from "./pages/ConsultationSlots";
+import Consultations from "./pages/Consultations";
 
 const App: Component = () => (
   <AuthProvider>
@@ -25,6 +26,7 @@ const App: Component = () => (
       <Route path="/therapists" component={Therapists} />
       <Route path="/diary" component={Diary} />
       <Route path="/consultation-slots" component={ConsultationSlots} />
+      <Route path="/consultations" component={Consultations} />
     </Router>
   </AuthProvider>
 );
