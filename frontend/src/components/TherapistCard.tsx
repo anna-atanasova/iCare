@@ -1,14 +1,55 @@
-import { Component, For, Show } from "solid-js";
+import { Component, For, Show, createSignal } from "solid-js";
 import { TherapistInfo } from "../api/therapist";
+import { patientApi } from "../api/patient";
 import { formatDateWithWeekday } from "../utils";
 
 interface TherapistCardProps {
   therapist: TherapistInfo;
+  isCurrentTherapist?: boolean;
+  onTherapistChange?: () => void;
 }
 
 const TherapistCard: Component<TherapistCardProps> = (props) => {
+  const [isLoading, setIsLoading] = createSignal(false);
+  const [error, setError] = createSignal("");
+
+  const handleSetTherapist = async () => {
+    setIsLoading(true);
+    setError("");
+
+    try {
+      if (props.isCurrentTherapist) {
+        await patientApi.removeTherapist();
+      } else {
+        await patientApi.setTherapist(props.therapist.idUser);
+      }
+      props.onTherapistChange?.();
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to update therapist",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow relative flex flex-col h-full">
+      <Show when={props.isCurrentTherapist}>
+        <div class="absolute top-4 right-4 z-10">
+          <div class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            My Therapist
+          </div>
+        </div>
+      </Show>
+
       <div class="bg-linear-to-r from-blue-500 to-blue-600 p-6 text-white">
         <h2 class="text-2xl font-bold mb-1">
           {props.therapist.name} {props.therapist.surname}
@@ -16,7 +57,7 @@ const TherapistCard: Component<TherapistCardProps> = (props) => {
         <p class="text-blue-100 text-sm">{props.therapist.degree}</p>
       </div>
 
-      <div class="p-6">
+      <div class="p-6 flex flex-col grow">
         <div class="space-y-3 mb-4">
           <div class="flex items-start">
             <svg
@@ -97,7 +138,7 @@ const TherapistCard: Component<TherapistCardProps> = (props) => {
           </div>
         </div>
 
-        <div class="border-t pt-4">
+        <div class="border-t py-4 grow">
           <h3 class="font-semibold text-gray-900 mb-3 flex items-center">
             <svg
               class="w-5 h-5 text-green-500 mr-2"
@@ -135,6 +176,67 @@ const TherapistCard: Component<TherapistCardProps> = (props) => {
                 )}
               </For>
             </div>
+          </Show>
+        </div>
+
+        <div class="border-t pt-4 mt-auto">
+          <Show when={error()}>
+            <div class="mb-3 text-sm text-red-600 bg-red-50 p-2 rounded">
+              {error()}
+            </div>
+          </Show>
+
+          <Show
+            when={!isLoading()}
+            fallback={
+              <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-current" />
+            }
+          >
+            <button
+              onClick={handleSetTherapist}
+              class={`w-full py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 cursor-pointer ${
+                props.isCurrentTherapist
+                  ? "bg-red-50 text-red-700 border border-red-200 hover:bg-red-100"
+                  : "bg-blue-600 text-white hover:bg-blue-700"
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
+            >
+              <Show
+                when={props.isCurrentTherapist}
+                fallback={
+                  <>
+                    <svg
+                      class="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                    Set as My Therapist
+                  </>
+                }
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+                Remove as My Therapist
+              </Show>
+            </button>
           </Show>
         </div>
       </div>

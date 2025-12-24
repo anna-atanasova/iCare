@@ -2,6 +2,7 @@ import { Component, createEffect, createResource, For, Show } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { useAuth } from "../context/AuthContext";
 import { therapistApi } from "../api/therapist";
+import { patientApi } from "../api/patient";
 import TherapistCard from "../components/TherapistCard";
 
 const Therapists: Component = () => {
@@ -22,6 +23,12 @@ const Therapists: Component = () => {
     },
   );
 
+  const [currentTherapistId, { refetch: refetchCurrentTherapist }] =
+    createResource(isAuthenticated, async (authenticated) => {
+      if (!authenticated) return null;
+      return await patientApi.getCurrentTherapist();
+    });
+
   createEffect(() => {
     if (!isAuthenticated()) {
       navigate("/login", { replace: true });
@@ -34,6 +41,8 @@ const Therapists: Component = () => {
     }
   });
 
+  const handleTherapistChange = async () => await refetchCurrentTherapist();
+
   return (
     <div class="container mx-auto px-4 py-8">
       <div class="mb-8">
@@ -44,7 +53,7 @@ const Therapists: Component = () => {
       </div>
 
       <Show
-        when={!therapists.loading}
+        when={!therapists.loading && !currentTherapistId.loading}
         fallback={
           <div class="flex justify-center items-center py-12">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
@@ -61,7 +70,13 @@ const Therapists: Component = () => {
         >
           <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <For each={therapists()}>
-              {(therapist) => <TherapistCard therapist={therapist} />}
+              {(therapist) => (
+                <TherapistCard
+                  therapist={therapist}
+                  isCurrentTherapist={currentTherapistId() === therapist.idUser}
+                  onTherapistChange={handleTherapistChange}
+                />
+              )}
             </For>
           </div>
         </Show>
