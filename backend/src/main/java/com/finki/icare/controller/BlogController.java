@@ -1,10 +1,9 @@
 package com.finki.icare.controller;
 
-import com.finki.icare.config.JwtAuthenticationToken;
 import com.finki.icare.dto.*;
-import com.finki.icare.exceptions.ICareException;
 import com.finki.icare.service.BlogService;
 import com.finki.icare.service.CommentService;
+import com.finki.icare.utils.AuthUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,16 +21,9 @@ public class BlogController {
     private final BlogService blogService;
     private final CommentService commentService;
 
-    private Integer getUserId(Authentication authentication) {
-        if (authentication instanceof JwtAuthenticationToken jwtAuth) {
-            return jwtAuth.getUserId();
-        }
-        throw ICareException.unauthorized("Authentication required");
-    }
-
     @GetMapping
     public ResponseEntity<List<BlogDTO>> getAllBlogs(Authentication authentication) {
-        Integer currentUserId = getUserId(authentication);
+        Integer currentUserId = AuthUtils.getUserId(authentication);
         List<BlogDTO> blogs = blogService.getAllBlogs(currentUserId);
         return ResponseEntity.ok(blogs);
     }
@@ -42,7 +34,7 @@ public class BlogController {
             Authentication authentication
     ) {
 
-        Integer userId = getUserId(authentication);
+        Integer userId = AuthUtils.getUserId(authentication);
         BlogDTO blog = blogService.getBlogById(id, userId);
         return ResponseEntity.ok(blog);
     }
@@ -53,7 +45,7 @@ public class BlogController {
             Authentication authentication
     ) {
 
-        Integer userId = getUserId(authentication);
+        Integer userId = AuthUtils.getUserId(authentication);
         BlogDTO createdBlog = blogService.createBlog(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdBlog);
     }
@@ -65,7 +57,7 @@ public class BlogController {
             Authentication authentication
     ) {
 
-        Integer userId = getUserId(authentication);
+        Integer userId = AuthUtils.getUserId(authentication);
         BlogDTO updatedBlog = blogService.updateBlog(id, request, userId);
         return ResponseEntity.ok(updatedBlog);
     }
@@ -76,7 +68,7 @@ public class BlogController {
             Authentication authentication
     ) {
 
-        Integer userId = getUserId(authentication);
+        Integer userId = AuthUtils.getUserId(authentication);
         blogService.deleteBlog(id, userId);
         return ResponseEntity.noContent().build();
     }
@@ -87,7 +79,7 @@ public class BlogController {
             Authentication authentication
     ) {
 
-        Integer userId = getUserId(authentication);
+        Integer userId = AuthUtils.getUserId(authentication);
         blogService.toggleLike(id, userId);
         return ResponseEntity.ok().build();
     }
@@ -99,7 +91,7 @@ public class BlogController {
             Authentication authentication
     ) {
 
-        Integer userId = getUserId(authentication);
+        Integer userId = AuthUtils.getUserId(authentication);
         CommentDTO comment = commentService.createComment(id, request, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(comment);
     }
@@ -110,7 +102,7 @@ public class BlogController {
             @RequestBody CreateCommentRequest request,
             Authentication authentication
     ) {
-        Integer userId = getUserId(authentication);
+        Integer userId = AuthUtils.getUserId(authentication);
         CommentDTO updatedComment = commentService.updateComment(commentId, request.getContent(), userId);
         return ResponseEntity.ok(updatedComment);
     }
@@ -120,7 +112,7 @@ public class BlogController {
             @PathVariable Integer commentId,
             Authentication authentication
     ) {
-        Integer userId = getUserId(authentication);
+        Integer userId = AuthUtils.getUserId(authentication);
         commentService.deleteComment(commentId, userId);
         return ResponseEntity.noContent().build();
     }

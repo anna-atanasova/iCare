@@ -1,10 +1,9 @@
 package com.finki.icare.controller;
 
-import com.finki.icare.config.JwtAuthenticationToken;
 import com.finki.icare.dto.AddSlotRequest;
 import com.finki.icare.dto.ConsultationSlotsDTO;
-import com.finki.icare.exceptions.ICareException;
 import com.finki.icare.service.ConsultationSlotService;
+import com.finki.icare.utils.AuthUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -21,26 +20,12 @@ public class ConsultationSlotController {
 
     private final ConsultationSlotService consultationSlotService;
 
-    private Integer getUserId(Authentication authentication) {
-        if (authentication instanceof JwtAuthenticationToken jwtAuth) {
-            return jwtAuth.getUserId();
-        }
-        throw ICareException.unauthorized("Authentication required");
-    }
-
-    private String getUserType(Authentication authentication) {
-        if (authentication instanceof JwtAuthenticationToken jwtAuth) {
-            return jwtAuth.getUserType();
-        }
-        throw ICareException.unauthorized("Authentication required");
-    }
-
     @GetMapping("/{therapistId}")
     public ResponseEntity<ConsultationSlotsDTO> getSlots(
             @PathVariable Integer therapistId,
             Authentication authentication
     ) {
-        String userType = getUserType(authentication);
+        String userType = AuthUtils.getUserType(authentication);
         ConsultationSlotsDTO slots = consultationSlotService.getTherapistSlots(therapistId, userType);
         return ResponseEntity.ok(slots);
     }
@@ -51,8 +36,8 @@ public class ConsultationSlotController {
             @RequestBody AddSlotRequest request,
             Authentication authentication
     ) {
-        Integer currentUserId = getUserId(authentication);
-        String userType = getUserType(authentication);
+        Integer currentUserId = AuthUtils.getUserId(authentication);
+        String userType = AuthUtils.getUserType(authentication);
         ConsultationSlotsDTO slots = consultationSlotService.addSlot(therapistId, request, currentUserId, userType);
         return ResponseEntity.ok(slots);
     }
@@ -63,8 +48,8 @@ public class ConsultationSlotController {
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             Authentication authentication
     ) {
-        Integer currentUserId = getUserId(authentication);
-        String userType = getUserType(authentication);
+        Integer currentUserId = AuthUtils.getUserId(authentication);
+        String userType = AuthUtils.getUserType(authentication);
         ConsultationSlotsDTO slots = consultationSlotService.removeSlot(therapistId, date, currentUserId, userType);
         return ResponseEntity.ok(slots);
     }

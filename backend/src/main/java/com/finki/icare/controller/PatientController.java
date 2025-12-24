@@ -1,8 +1,7 @@
 package com.finki.icare.controller;
 
-import com.finki.icare.exceptions.ICareException;
-import com.finki.icare.config.JwtAuthenticationToken;
 import com.finki.icare.service.PatientService;
+import com.finki.icare.utils.AuthUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -18,32 +17,25 @@ public class PatientController {
         this.patientService = patientService;
     }
 
-    private Integer getUserId(Authentication authentication) {
-        if (authentication instanceof JwtAuthenticationToken jwtAuth) {
-            return jwtAuth.getUserId();
-        }
-        throw ICareException.unauthorized("Authentication required");
-    }
-
     @PutMapping("/therapist/{therapistId}")
     public ResponseEntity<Void> setTherapist(
             @PathVariable Integer therapistId,
             Authentication authentication) {
-        Integer patientId = getUserId(authentication);
+        Integer patientId = AuthUtils.getUserId(authentication);
         patientService.setTherapist(patientId, therapistId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/therapist")
     public ResponseEntity<Void> removeTherapist(Authentication authentication) {
-        Integer patientId = getUserId(authentication);
+        Integer patientId = AuthUtils.getUserId(authentication);
         patientService.removeTherapist(patientId);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/therapist")
     public ResponseEntity<Integer> getCurrentTherapist(Authentication authentication) {
-        Integer patientId = getUserId(authentication);
+        Integer patientId = AuthUtils.getUserId(authentication);
         Integer therapistId = patientService.getCurrentTherapistId(patientId);
         if (therapistId == null) {
             return ResponseEntity.noContent().build();

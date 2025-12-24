@@ -1,10 +1,9 @@
 package com.finki.icare.controller;
 
-import com.finki.icare.config.JwtAuthenticationToken;
 import com.finki.icare.dto.PatientDTO;
 import com.finki.icare.dto.TherapistDTO;
-import com.finki.icare.exceptions.ICareException;
 import com.finki.icare.service.TherapistService;
+import com.finki.icare.utils.AuthUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -23,13 +22,6 @@ public class TherapistController {
 
     private final TherapistService therapistService;
 
-    private Integer getUserId(Authentication authentication) {
-        if (authentication instanceof JwtAuthenticationToken jwtAuth) {
-            return jwtAuth.getUserId();
-        }
-        throw ICareException.unauthorized("Authentication required");
-    }
-
     @GetMapping
     public ResponseEntity<List<TherapistDTO>> getAllTherapists() {
         List<TherapistDTO> therapists = therapistService.getAllTherapistsWithFreeSlots();
@@ -38,7 +30,7 @@ public class TherapistController {
 
     @GetMapping("/patients")
     public ResponseEntity<List<PatientDTO>> getTherapistPatients(Authentication authentication) {
-        Integer therapistId = getUserId(authentication);
+        Integer therapistId = AuthUtils.getUserId(authentication);
         List<PatientDTO> patients = therapistService.getTherapistPatients(therapistId);
         return ResponseEntity.ok(patients);
     }

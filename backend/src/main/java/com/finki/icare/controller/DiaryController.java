@@ -1,11 +1,10 @@
 package com.finki.icare.controller;
 
-import com.finki.icare.config.JwtAuthenticationToken;
 import com.finki.icare.dto.CreateDiaryEntryRequest;
 import com.finki.icare.dto.DiaryEntryDTO;
 import com.finki.icare.dto.UpdateDiaryEntryRequest;
-import com.finki.icare.exceptions.ICareException;
 import com.finki.icare.service.DiaryService;
+import com.finki.icare.utils.AuthUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,20 +21,6 @@ public class DiaryController {
 
     private final DiaryService diaryService;
 
-    private Integer getUserId(Authentication authentication) {
-        if (authentication instanceof JwtAuthenticationToken jwtAuth) {
-            return jwtAuth.getUserId();
-        }
-        throw ICareException.unauthorized("Authentication required");
-    }
-
-    private String getUserType(Authentication authentication) {
-        if (authentication instanceof JwtAuthenticationToken jwtAuth) {
-            return jwtAuth.getUserType();
-        }
-        throw ICareException.unauthorized("Authentication required");
-    }
-
     @GetMapping("/{patientId}")
     public ResponseEntity<List<DiaryEntryDTO>> getPatientDiaryEntries(
             @PathVariable Integer patientId,
@@ -43,8 +28,8 @@ public class DiaryController {
             @RequestParam int month,
             Authentication authentication
     ) {
-        Integer currentUserId = getUserId(authentication);
-        String userType = getUserType(authentication);
+        Integer currentUserId = AuthUtils.getUserId(authentication);
+        String userType = AuthUtils.getUserType(authentication);
 
         List<DiaryEntryDTO> entries = diaryService.getPatientDiaryEntriesForMonth(
                 patientId, year, month, currentUserId, userType
@@ -57,8 +42,8 @@ public class DiaryController {
             @RequestBody CreateDiaryEntryRequest request,
             Authentication authentication
     ) {
-        Integer currentUserId = getUserId(authentication);
-        String userType = getUserType(authentication);
+        Integer currentUserId = AuthUtils.getUserId(authentication);
+        String userType = AuthUtils.getUserType(authentication);
 
         DiaryEntryDTO entry = diaryService.createDiaryEntry(request, currentUserId, userType);
         return ResponseEntity.status(HttpStatus.CREATED).body(entry);
@@ -70,8 +55,8 @@ public class DiaryController {
             @RequestBody UpdateDiaryEntryRequest request,
             Authentication authentication
     ) {
-        Integer currentUserId = getUserId(authentication);
-        String userType = getUserType(authentication);
+        Integer currentUserId = AuthUtils.getUserId(authentication);
+        String userType = AuthUtils.getUserType(authentication);
 
         DiaryEntryDTO entry = diaryService.updateDiaryEntry(diaryId, request, currentUserId, userType);
         return ResponseEntity.ok(entry);
@@ -82,8 +67,8 @@ public class DiaryController {
             @PathVariable Integer diaryId,
             Authentication authentication
     ) {
-        Integer currentUserId = getUserId(authentication);
-        String userType = getUserType(authentication);
+        Integer currentUserId = AuthUtils.getUserId(authentication);
+        String userType = AuthUtils.getUserType(authentication);
 
         diaryService.deleteDiaryEntry(diaryId, currentUserId, userType);
         return ResponseEntity.noContent().build();
