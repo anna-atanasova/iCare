@@ -3,6 +3,7 @@ package com.finki.icare.service;
 import com.finki.icare.dto.CommentDTO;
 import com.finki.icare.dto.CreateCommentRequest;
 import com.finki.icare.exceptions.ICareException;
+import com.finki.icare.mapper.CommentMapper;
 import com.finki.icare.model.Blog;
 import com.finki.icare.model.Comment;
 import com.finki.icare.model.Patient;
@@ -22,6 +23,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final BlogRepository blogRepository;
     private final PatientRepository patientRepository;
+    private final CommentMapper commentMapper;
 
     @Transactional
     public CommentDTO createComment(Integer blogId, CreateCommentRequest request, Integer patientId) {
@@ -40,7 +42,7 @@ public class CommentService {
         comment.setDateOfComment(OffsetDateTime.now());
 
         Comment savedComment = commentRepository.save(comment);
-        return convertToDTO(savedComment);
+        return commentMapper.toDTO(savedComment);
     }
 
     @Transactional
@@ -55,7 +57,7 @@ public class CommentService {
 
         comment.setContent(content);
         Comment updatedComment = commentRepository.save(comment);
-        return convertToDTO(updatedComment);
+        return commentMapper.toDTO(updatedComment);
     }
 
     @Transactional
@@ -69,17 +71,5 @@ public class CommentService {
         }
 
         commentRepository.delete(comment);
-    }
-
-    public CommentDTO convertToDTO(Comment comment) {
-        CommentDTO dto = new CommentDTO();
-        dto.setIdComment(comment.getIdComment());
-        dto.setContent(comment.getContent());
-        dto.setDateOfComment(comment.getDateOfComment());
-        dto.setPatientId(comment.getPatient().getIdUser());
-        dto.setPatientUsername(comment.getPatient().getUsername());
-        dto.setPatientName(comment.getPatient().getName() + " " + comment.getPatient().getSurname());
-
-        return dto;
     }
 }

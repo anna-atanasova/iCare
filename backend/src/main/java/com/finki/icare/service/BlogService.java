@@ -4,6 +4,8 @@ import com.finki.icare.dto.BlogDTO;
 import com.finki.icare.dto.CreateBlogRequest;
 import com.finki.icare.dto.UpdateBlogRequest;
 import com.finki.icare.exceptions.ICareException;
+import com.finki.icare.mapper.BlogMapper;
+import com.finki.icare.mapper.CommentMapper;
 import com.finki.icare.model.Blog;
 import com.finki.icare.model.Patient;
 import com.finki.icare.repository.BlogRepository;
@@ -13,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,7 +23,8 @@ public class BlogService {
 
     private final BlogRepository blogRepository;
     private final PatientRepository patientRepository;
-    private final CommentService commentService;
+    private final BlogMapper blogMapper;
+    private final CommentMapper commentMapper;
 
     @Transactional(readOnly = true)
     public List<BlogDTO> getAllBlogs(Integer patientId) {
@@ -31,7 +33,7 @@ public class BlogService {
         return blogRepository
                 .findAllByOrderByDateOfPostDesc()
                 .stream()
-                .map(blog -> convertToDTO(blog, patientId, false))
+                .map(blog -> blogMapper.toDTO(blog, patientId, false, commentMapper))
                 .toList();
     }
 
@@ -40,7 +42,7 @@ public class BlogService {
         getPatient(patientId);
         Blog blog = getBlog(blogId);
 
-        return convertToDTO(blog, patientId, true);
+        return blogMapper.toDTO(blog, patientId, true, commentMapper);
     }
 
     @Transactional
@@ -54,7 +56,7 @@ public class BlogService {
         blog.setDateOfPost(OffsetDateTime.now());
 
         Blog savedBlog = blogRepository.save(blog);
-        return convertToDTO(savedBlog, patientId, false);
+        return blogMapper.toDTO(savedBlog, patientId, false, commentMapper);
     }
 
     @Transactional
@@ -69,7 +71,7 @@ public class BlogService {
         blog.setContent(request.getContent());
 
         Blog updatedBlog = blogRepository.save(blog);
-        return convertToDTO(updatedBlog, patientId, true);
+        return blogMapper.toDTO(updatedBlog, patientId, true, commentMapper);
     }
 
     @Transactional
@@ -104,47 +106,6 @@ public class BlogService {
         }
 
         patientRepository.save(patient);
-    }
-
-    private BlogDTO convertToDTO(Blog blog, Integer patientId, boolean includeFullData) {
-        BlogDTO dto = new BlogDTO();
-        dto.setIdBlog(blog.getIdBlog());
-        dto.setTitle(blog.getTitle());
-
-        if (includeFullData) {
-            dto.setContent(blog.getContent());
-        } else {
-            dto.setContent(null);
-        }
-
-        dto.setDateOfPost(blog.getDateOfPost());
-        dto.setPatientId(blog.getPatient().getIdUser());
-        dto.setPatientUsername(blog.getPatient().getUsername());
-        dto.setPatientName(blog.getPatient().getName() + " " + blog.getPatient().getSurname());
-        dto.setLikesCount(blog.getLikedBy() != null ? blog.getLikedBy().size() : 0);
-        dto.setCommentsCount(blog.getComments() != null ? blog.getComments().size() : 0);
-
-        dto.setLikedByCurrentUser(
-            patientId != null &&
-            blog.getLikedBy() != null &&
-            blog
-                .getLikedBy()
-                .stream()
-                .anyMatch(patient -> patient.getIdUser().equals(patientId))
-        );
-
-        if (includeFullData && blog.getComments() != null) {
-            dto.setComments(
-                blog.getComments()
-                    .stream()
-                    .map(commentService::convertToDTO)
-                    .toList()
-            );
-        } else {
-            dto.setComments(new ArrayList<>());
-        }
-
-        return dto;
     }
 
     private Patient getPatient(Integer patientId) {

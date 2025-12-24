@@ -4,6 +4,7 @@ import com.finki.icare.dto.CreateDiaryEntryRequest;
 import com.finki.icare.dto.DiaryEntryDTO;
 import com.finki.icare.dto.UpdateDiaryEntryRequest;
 import com.finki.icare.exceptions.ICareException;
+import com.finki.icare.mapper.DiaryMapper;
 import com.finki.icare.model.Diary;
 import com.finki.icare.model.Patient;
 import com.finki.icare.repository.DiaryRepository;
@@ -20,6 +21,7 @@ public class DiaryService {
 
     private final DiaryRepository diaryRepository;
     private final PatientRepository patientRepository;
+    private final DiaryMapper diaryMapper;
 
     public List<DiaryEntryDTO> getPatientDiaryEntriesForMonth(Integer patientId, int year, int month, Integer currentUserId, String userType) {
         if (!canAccessDiary(patientId, currentUserId, userType)) {
@@ -32,7 +34,7 @@ public class DiaryService {
         List<Diary> diaries = diaryRepository.findByPatientIdAndDateRange(patientId, startDate, endDate);
 
         return diaries.stream()
-                .map(this::mapToDiaryEntryDTO)
+                .map(diaryMapper::toDTO)
                 .toList();
     }
 
@@ -61,7 +63,7 @@ public class DiaryService {
         diary.setContent(request.getContent());
 
         Diary savedDiary = diaryRepository.save(diary);
-        return mapToDiaryEntryDTO(savedDiary);
+        return diaryMapper.toDTO(savedDiary);
     }
 
     public DiaryEntryDTO updateDiaryEntry(Integer diaryId, UpdateDiaryEntryRequest request, Integer currentUserId, String userType) {
@@ -89,7 +91,7 @@ public class DiaryService {
         }
 
         Diary updatedDiary = diaryRepository.save(diary);
-        return mapToDiaryEntryDTO(updatedDiary);
+        return diaryMapper.toDTO(updatedDiary);
     }
 
     public void deleteDiaryEntry(Integer diaryId, Integer currentUserId, String userType) {
@@ -118,14 +120,5 @@ public class DiaryService {
         }
 
         return false;
-    }
-
-    private DiaryEntryDTO mapToDiaryEntryDTO(Diary diary) {
-        DiaryEntryDTO dto = new DiaryEntryDTO();
-        dto.setIdDiary(diary.getIdDiary());
-        dto.setDate(diary.getDate());
-        dto.setDailyRating(diary.getDailyRating());
-        dto.setContent(diary.getContent());
-        return dto;
     }
 }
