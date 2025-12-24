@@ -11,6 +11,7 @@ interface CalendarGridProps {
   }>;
   getEntryForDate: (date: Date | null) => DiaryEntry | undefined;
   onDayClick: (date: Date | null) => void;
+  isTherapistView?: boolean;
 }
 
 const CalendarGrid: Component<CalendarGridProps> = (props) => (
@@ -28,6 +29,7 @@ const CalendarGrid: Component<CalendarGridProps> = (props) => (
             hasEntry={!!entry}
             isFuture={isFuture}
             isToday={isToday}
+            isTherapistView={props.isTherapistView}
             entry={
               entry
                 ? {

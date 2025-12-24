@@ -253,6 +253,7 @@ const Diary: Component = () => {
             days={generateCalendarDays()}
             getEntryForDate={getEntryForDate}
             onDayClick={handleDayClick}
+            isTherapistView={isTherapist()}
           />
         </Show>
         <RatingLegend />

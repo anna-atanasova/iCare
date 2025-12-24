@@ -6,6 +6,7 @@ interface CalendarDayProps {
   hasEntry: boolean;
   isFuture?: boolean;
   isToday?: boolean;
+  isTherapistView?: boolean;
   entry?: {
     dailyRating: number;
     content: string;
@@ -25,13 +26,15 @@ const CalendarDay: Component<CalendarDayProps> = (props) => (
   <Show
     when={props.day !== null && props.isCurrentMonth}
     fallback={
-      <div class="bg-gray-50 border border-gray-200 rounded-lg h-24 p-2" />
+      <div
+        class={`bg-gray-50 border border-gray-200 rounded-lg p-2 ${props.isTherapistView ? "h-16" : "h-24"}`}
+      />
     }
   >
     <div
-      class={`rounded-lg h-24 p-2 transition-all ${
+      class={`rounded-lg p-2 transition-all ${props.isTherapistView ? "h-16" : "h-24"} ${
         props.isToday ? "border-4 border-blue-600 shadow-lg" : "border-2"
-      } ${props.isFuture ? "" : "cursor-pointer"} ${
+      } ${props.isFuture || props.isTherapistView ? "" : "cursor-pointer"} ${
         props.hasEntry
           ? `${getRatingColor(props.entry!.dailyRating)} hover:shadow-md`
           : props.isFuture
@@ -57,10 +60,14 @@ const CalendarDay: Component<CalendarDayProps> = (props) => (
           {props.day}
         </span>
         <Show when={props.hasEntry}>
-          <span class="text-xs font-bold">★ {props.entry!.dailyRating}/10</span>
+          <span
+            class={`font-bold ${props.isTherapistView ? "text-base" : "text-xs"}`}
+          >
+            ★ {props.entry!.dailyRating}/10
+          </span>
         </Show>
       </div>
-      <Show when={props.hasEntry}>
+      <Show when={props.hasEntry && !props.isTherapistView}>
         <p class="text-xs line-clamp-2 overflow-hidden">
           {props.entry!.content}
         </p>
