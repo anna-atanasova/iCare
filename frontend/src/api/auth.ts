@@ -13,6 +13,26 @@ export interface LoginResponse {
   userId: number;
 }
 
+export interface RegisterPatientRequest {
+  username: string;
+  password: string;
+  name: string;
+  surname: string;
+  email: string;
+}
+
+export interface RegisterTherapistRequest {
+  username: string;
+  password: string;
+  name: string;
+  surname: string;
+  email: string;
+  officeLocation: string;
+  degree: string;
+  yearsExp: number;
+  phoneNumber: string;
+}
+
 export interface ApiError {
   message: string;
 }
@@ -30,6 +50,44 @@ export const authApi = {
     if (!response.ok) {
       const error: ApiError = await response.json();
       throw new Error(error.message || "Login failed");
+    }
+
+    return response.json();
+  },
+
+  registerPatient: async (
+    data: RegisterPatientRequest,
+  ): Promise<LoginResponse> => {
+    const response = await fetch(`${API_BASE_URL}/auth/register/patient`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const error: ApiError = await response.json();
+      throw new Error(error.message || "Registration failed");
+    }
+
+    return response.json();
+  },
+
+  registerTherapist: async (
+    data: RegisterTherapistRequest,
+  ): Promise<LoginResponse> => {
+    const response = await fetch(`${API_BASE_URL}/auth/register/therapist`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const error: ApiError = await response.json();
+      throw new Error(error.message || "Registration failed");
     }
 
     return response.json();
