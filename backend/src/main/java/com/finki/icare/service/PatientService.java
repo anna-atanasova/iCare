@@ -1,6 +1,8 @@
 package com.finki.icare.service;
 
+import com.finki.icare.dto.PatientDTO;
 import com.finki.icare.exceptions.ICareException;
+import com.finki.icare.mapper.PatientMapper;
 import com.finki.icare.model.Patient;
 import com.finki.icare.model.Therapist;
 import com.finki.icare.repository.PatientRepository;
@@ -9,12 +11,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PatientService {
 
     private final PatientRepository patientRepository;
     private final TherapistRepository therapistRepository;
+    private final PatientMapper patientMapper;
 
     @Transactional
     public void setTherapist(Integer patientId, Integer therapistId) {
@@ -46,5 +51,11 @@ public class PatientService {
                 .orElseThrow(() -> ICareException.notFound("Patient not found"));
 
         return patient.getTherapist() != null ? patient.getTherapist().getIdUser() : null;
+    }
+
+    public List<PatientDTO> getAllPatients() {
+        return patientRepository.findAll().stream()
+                .map(patientMapper::toDTO)
+                .toList();
     }
 }

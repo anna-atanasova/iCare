@@ -1,6 +1,6 @@
 import { Component, For, Show } from "solid-js";
 import { Consultation } from "../api/consultation";
-import { Patient } from "../api/therapist";
+import { Patient } from "../api/patient";
 
 interface ConsultationFormData {
   patientId: number;

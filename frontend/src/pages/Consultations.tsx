@@ -16,7 +16,7 @@ import {
 } from "../api/consultation";
 import ConsultationTable from "../components/ConsultationTable";
 import ConsultationModal from "../components/ConsultationModal";
-import { therapistApi } from "../api/therapist";
+import { patientApi } from "../api/patient";
 
 const Consultations: Component = () => {
   const { user, isAuthenticated } = useAuth();
@@ -42,7 +42,7 @@ const Consultations: Component = () => {
     }),
     async (params) => {
       if (!params.authenticated || !params.isTherapist) return [];
-      return await therapistApi.getTherapistPatients();
+      return await patientApi.getAllPatients();
     },
   );
 

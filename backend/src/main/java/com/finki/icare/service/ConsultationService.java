@@ -45,10 +45,6 @@ public class ConsultationService {
                 .findById(request.getPatientId())
                 .orElseThrow(() -> ICareException.notFound("Patient not found"));
 
-        if (patient.getTherapist() == null || !patient.getTherapist().getIdUser().equals(currentUserId)) {
-            throw ICareException.forbidden("This patient is not assigned to you");
-        }
-
         Therapist therapist = therapistRepository
                 .findById(currentUserId)
                 .orElseThrow(() -> ICareException.notFound("Therapist not found"));

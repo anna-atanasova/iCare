@@ -2,7 +2,27 @@ import { getAuthHeader } from "./auth";
 
 const API_BASE_URL = "http://localhost:8080/api";
 
+export interface Patient {
+  userId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
 export const patientApi = {
+  getAllPatients: async (): Promise<Patient[]> => {
+    const response = await fetch(`${API_BASE_URL}/patients`, {
+      headers: getAuthHeader(),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to fetch patients");
+    }
+
+    return response.json();
+  },
+
   setTherapist: async (therapistId: number): Promise<void> => {
     const response = await fetch(
       `${API_BASE_URL}/patients/therapist/${therapistId}`,
