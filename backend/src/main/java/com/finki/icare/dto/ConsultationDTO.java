@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -20,4 +21,5 @@ public class ConsultationDTO {
     private LocalDate dateOfPayment;
     private BigDecimal price;
     private String advice;
+    private List<TherapyDTO> therapies;
 }

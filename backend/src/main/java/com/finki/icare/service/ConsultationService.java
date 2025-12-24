@@ -13,6 +13,7 @@ import com.finki.icare.repository.PatientRepository;
 import com.finki.icare.repository.TherapistRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class ConsultationService {
     private final ConsultationRepository consultationRepository;
     private final PatientRepository patientRepository;
     private final TherapistRepository therapistRepository;
+    private final TherapyService therapyService;
     private final ConsultationMapper consultationMapper;
 
     public List<ConsultationDTO> getTherapistConsultations(Integer therapistId, Integer currentUserId, String userType) {
@@ -36,6 +38,7 @@ public class ConsultationService {
                 .toList();
     }
 
+    @Transactional
     public ConsultationDTO createConsultation(CreateConsultationRequest request, Integer currentUserId, String userType) {
         if (!"THERAPIST".equals(userType)) {
             throw ICareException.forbidden("Only therapists can create consultation records");
@@ -66,9 +69,15 @@ public class ConsultationService {
         consultation.setDateOfPayment(request.getDateOfPayment());
 
         Consultation savedConsultation = consultationRepository.save(consultation);
-        return consultationMapper.toDTO(savedConsultation);
+
+        therapyService.createTherapiesForConsultation(savedConsultation, request.getTherapies());
+
+        return consultationMapper
+                .toDTO(consultationRepository.findById(savedConsultation.getIdConsultation())
+                .orElseThrow(() -> ICareException.notFound("Consultation not found")));
     }
 
+    @Transactional
     public ConsultationDTO updateConsultation(Integer consultationId, UpdateConsultationRequest request, Integer currentUserId, String userType) {
         if (!"THERAPIST".equals(userType)) {
             throw ICareException.forbidden("Only therapists can update consultation records");
@@ -99,7 +108,14 @@ public class ConsultationService {
         consultation.setDateOfPayment(request.getDateOfPayment());
 
         Consultation updatedConsultation = consultationRepository.save(consultation);
-        return consultationMapper.toDTO(updatedConsultation);
+
+        if (request.getTherapies() != null && !request.getTherapies().isEmpty()) {
+            therapyService.createTherapiesForConsultation(updatedConsultation, request.getTherapies());
+        }
+
+        return consultationMapper
+                .toDTO(consultationRepository.findById(updatedConsultation.getIdConsultation())
+                .orElseThrow(() -> ICareException.notFound("Consultation not found")));
     }
 
     public void deleteConsultation(Integer consultationId, Integer currentUserId, String userType) {

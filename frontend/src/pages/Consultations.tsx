@@ -17,6 +17,7 @@ import {
 import ConsultationTable from "../components/ConsultationTable";
 import ConsultationModal from "../components/ConsultationModal";
 import { patientApi } from "../api/patient";
+import { Therapy } from "../api/therapy";
 
 const Consultations: Component = () => {
   const { user, isAuthenticated } = useAuth();
@@ -32,6 +33,8 @@ const Consultations: Component = () => {
     advice: "",
     dateOfPayment: null as string | null,
   });
+  const [newTherapies, setNewTherapies] = createSignal<Therapy[]>([]);
+  const [existingTherapies, setExistingTherapies] = createSignal<Therapy[]>([]);
 
   const isTherapist = () => user()?.userType === "THERAPIST";
 
@@ -72,6 +75,8 @@ const Consultations: Component = () => {
 
   const openCreateModal = () => {
     setEditingConsultation(null);
+    setNewTherapies([]);
+    setExistingTherapies([]);
     const today = new Date().toISOString().split("T")[0];
     setFormData({
       patientId: patients()?.[0]?.userId || 0,
@@ -85,6 +90,8 @@ const Consultations: Component = () => {
 
   const openEditModal = (consultation: Consultation) => {
     setEditingConsultation(consultation);
+    setExistingTherapies(consultation.therapies || []);
+    setNewTherapies([]);
     setFormData({
       patientId: consultation.patientId,
       date: consultation.date,
@@ -105,6 +112,11 @@ const Consultations: Component = () => {
 
     try {
       const data = formData();
+      const therapiesToSend = newTherapies().map((t) => ({
+        name: t.name,
+        dose: t.dose,
+        expDate: t.expDate,
+      }));
 
       if (editingConsultation()) {
         const updateData: UpdateConsultationRequest = {
@@ -112,6 +124,7 @@ const Consultations: Component = () => {
           price: data.price,
           advice: data.advice,
           dateOfPayment: data.dateOfPayment,
+          therapies: therapiesToSend,
         };
         await consultationApi.updateConsultation(
           editingConsultation()!.idConsultation,
@@ -124,6 +137,7 @@ const Consultations: Component = () => {
           price: data.price,
           advice: data.advice,
           dateOfPayment: data.dateOfPayment,
+          therapies: therapiesToSend,
         };
         await consultationApi.createConsultation(createData);
       }
@@ -202,9 +216,16 @@ const Consultations: Component = () => {
           editingConsultation={editingConsultation()}
           formData={formData()}
           patients={patients() || []}
+          newTherapies={newTherapies()}
+          existingTherapies={existingTherapies()}
           onClose={closeModal}
           onSubmit={handleSubmit}
           onFormChange={setFormData}
+          onNewTherapiesChange={setNewTherapies}
+          onExistingTherapiesChange={(therapies) => {
+            setExistingTherapies(therapies);
+            refetch();
+          }}
         />
       </Show>
     </div>

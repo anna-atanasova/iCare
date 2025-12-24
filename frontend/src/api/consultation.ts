@@ -1,4 +1,5 @@
 import { getAuthHeader, getAuthHeaderJson } from "./auth";
+import { Therapy } from "./therapy";
 
 const API_BASE_URL = "http://localhost:8080/api";
 
@@ -12,6 +13,7 @@ export interface Consultation {
   dateOfPayment: string | null;
   price: number;
   advice: string;
+  therapies: Therapy[];
 }
 
 export const isConsultationPaid = (consultation: Consultation): boolean =>
@@ -23,6 +25,11 @@ export interface CreateConsultationRequest {
   price: number;
   advice: string;
   dateOfPayment?: string | null;
+  therapies?: Array<{
+    name: string;
+    dose: string;
+    expDate: string;
+  }>;
 }
 
 export interface UpdateConsultationRequest {
@@ -30,6 +37,11 @@ export interface UpdateConsultationRequest {
   price?: number;
   advice?: string;
   dateOfPayment?: string | null;
+  therapies?: Array<{
+    name: string;
+    dose: string;
+    expDate: string;
+  }>;
 }
 
 export const consultationApi = {

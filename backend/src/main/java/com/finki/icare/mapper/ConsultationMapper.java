@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {TherapyMapper.class})
 public interface ConsultationMapper {
 
     @Mapping(target = "idConsultation", source = "idConsultation")
@@ -18,5 +18,6 @@ public interface ConsultationMapper {
     @Mapping(target = "dateOfPayment", source = "dateOfPayment")
     @Mapping(target = "price", source = "price")
     @Mapping(target = "advice", source = "advice")
+    @Mapping(target = "therapies", source = "therapies")
     ConsultationDTO toDTO(Consultation consultation);
 }

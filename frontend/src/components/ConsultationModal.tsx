@@ -1,6 +1,9 @@
 import { Component, For, Show } from "solid-js";
 import { Consultation } from "../api/consultation";
 import { Patient } from "../api/patient";
+import { Therapy } from "../api/therapy";
+import TherapyList from "./TherapyList";
+import ExistingTherapyList from "./ExistingTherapyList";
 
 interface ConsultationFormData {
   patientId: number;
@@ -14,9 +17,13 @@ interface ConsultationModalProps {
   editingConsultation: Consultation | null;
   formData: ConsultationFormData;
   patients: Patient[];
+  newTherapies: Therapy[];
+  existingTherapies: Therapy[];
   onClose: () => void;
   onSubmit: (e: Event) => void;
   onFormChange: (data: ConsultationFormData) => void;
+  onNewTherapiesChange: (therapies: Therapy[]) => void;
+  onExistingTherapiesChange: (therapies: Therapy[]) => void;
 }
 
 const ConsultationModal: Component<ConsultationModalProps> = (props) => (
@@ -163,6 +170,31 @@ const ConsultationModal: Component<ConsultationModalProps> = (props) => (
               />
             </div>
           </Show>
+        </div>
+
+        <Show when={props.editingConsultation}>
+          <div class="mt-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">
+              Existing Therapies
+            </h3>
+            <ExistingTherapyList
+              consultationId={props.editingConsultation!.idConsultation}
+              therapies={props.existingTherapies}
+              onTherapiesChange={props.onExistingTherapiesChange}
+            />
+          </div>
+        </Show>
+
+        <div class="mt-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">
+            <Show when={props.editingConsultation} fallback={<>Therapies</>}>
+              New Therapies to Add
+            </Show>
+          </h3>
+          <TherapyList
+            therapies={props.newTherapies}
+            onPendingTherapiesChange={props.onNewTherapiesChange}
+          />
         </div>
 
         <div class="mt-6 flex justify-end space-x-3">

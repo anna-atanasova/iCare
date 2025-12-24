@@ -43,6 +43,6 @@ public class Consultation {
     private String advice;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "consultation", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "consultation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Therapy> therapies;
 }
