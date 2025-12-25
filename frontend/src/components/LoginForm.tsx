@@ -1,7 +1,7 @@
-import { Component, createSignal } from "solid-js";
+import { type Component, createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { useAuth } from "../context/AuthContext";
-import { authApi } from "../api/auth";
+import { useAuth } from "@/context/AuthContext";
+import { authApi } from "@/api/auth";
 
 interface LoginFormProps {
   onSwitchToRegister: () => void;

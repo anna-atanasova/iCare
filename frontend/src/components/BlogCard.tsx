@@ -1,7 +1,7 @@
-import { Component, Show } from "solid-js";
-import { BlogPost } from "../api/blog";
-import { formatDate } from "../utils";
-import { useAuth } from "../context/AuthContext";
+import { type Component, Show } from "solid-js";
+import { formatDate } from "@/utils";
+import { useAuth } from "@/context/AuthContext";
+import type { BlogPost } from "@/api/blog";
 
 interface BlogCardProps {
   blog: BlogPost;

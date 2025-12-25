@@ -1,9 +1,9 @@
-import { Component, Show } from "solid-js";
-import { A } from "@solidjs/router";
-import { useAuth } from "../context/AuthContext";
-import UserMenu from "./UserMenu";
 import logo from "../../assets/icare.png";
-import { UserType } from "../enums/UserType";
+import { type Component, Show } from "solid-js";
+import { A } from "@solidjs/router";
+import { useAuth } from "@/context/AuthContext";
+import UserMenu from "@/components/UserMenu";
+import { UserType } from "@/enums/UserType";
 
 const Header: Component = () => {
   const { isAuthenticated, user } = useAuth();

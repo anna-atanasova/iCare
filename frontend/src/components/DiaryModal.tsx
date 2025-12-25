@@ -1,6 +1,6 @@
-import { Component, Show, createSignal, createEffect } from "solid-js";
-import { DiaryEntry } from "../api/diary";
-import { formatDateWithLongWeekday } from "../utils";
+import { type Component, Show, createSignal, createEffect } from "solid-js";
+import { formatDateWithLongWeekday } from "@/utils";
+import type { DiaryEntry } from "@/api/diary";
 
 interface DiaryModalProps {
   isOpen: boolean;

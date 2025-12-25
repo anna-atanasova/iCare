@@ -1,17 +1,17 @@
 import {
-  Component,
+  type Component,
   createEffect,
   createSignal,
   createResource,
   Show,
 } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { useAuth } from "../context/AuthContext";
-import { blogApi, BlogPost } from "../api/blog";
-import BlogList from "../components/BlogList";
-import BlogModal from "../components/BlogModal";
-import CreateBlogForm from "../components/CreateBlogForm";
-import { UserType } from "../enums/UserType";
+import { useAuth } from "@/context/AuthContext";
+import { blogApi, type BlogPost } from "@/api/blog";
+import BlogList from "@/components/BlogList";
+import BlogModal from "@/components/BlogModal";
+import CreateBlogForm from "@/components/CreateBlogForm";
+import { UserType } from "@/enums/UserType";
 
 const Blogs: Component = () => {
   const { user, isAuthenticated } = useAuth();

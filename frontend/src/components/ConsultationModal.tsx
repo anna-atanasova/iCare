@@ -1,9 +1,9 @@
-import { Component, For, Show } from "solid-js";
-import { Consultation } from "../api/consultation";
-import { Patient } from "../api/patient";
-import { Therapy } from "../api/therapy";
-import TherapyList from "./TherapyList";
-import ExistingTherapyList from "./ExistingTherapyList";
+import { type Component, For, Show } from "solid-js";
+import TherapyList from "@/components/TherapyList";
+import ExistingTherapyList from "@/components/ExistingTherapyList";
+import type { Consultation } from "@/api/consultation";
+import type { Patient } from "@/api/patient";
+import type { Therapy } from "@/api/therapy";
 
 interface ConsultationFormData {
   patientId: number;

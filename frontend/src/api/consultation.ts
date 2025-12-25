@@ -1,5 +1,5 @@
-import { getAuthHeader, getAuthHeaderJson } from "./auth";
-import { Therapy } from "./therapy";
+import { getAuthHeader, getAuthHeaderJson } from "@/api/auth";
+import type { Therapy } from "@/api/therapy";
 
 const API_BASE_URL = "http://localhost:8080/api";
 

@@ -1,7 +1,7 @@
-import { Component, For, Show, createSignal } from "solid-js";
-import { Comment } from "../api/blog";
-import { formatDateTime } from "../utils";
-import { useAuth } from "../context/AuthContext";
+import { type Component, For, Show, createSignal } from "solid-js";
+import { formatDateTime } from "@/utils";
+import { useAuth } from "@/context/AuthContext";
+import type { Comment } from "@/api/blog";
 
 interface CommentSectionProps {
   comments: Comment[];

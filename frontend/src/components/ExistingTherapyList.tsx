@@ -1,6 +1,10 @@
-import { Component, createSignal, For, Show } from "solid-js";
-import { Therapy, therapyApi, UpdateTherapyRequest } from "../api/therapy";
-import { formatDate } from "../utils";
+import { type Component, createSignal, For, Show } from "solid-js";
+import { formatDate } from "@/utils";
+import {
+  type Therapy,
+  therapyApi,
+  type UpdateTherapyRequest,
+} from "@/api/therapy";
 
 interface ExistingTherapyListProps {
   consultationId: number;

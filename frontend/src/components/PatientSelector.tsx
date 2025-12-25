@@ -1,5 +1,5 @@
-import { Component, For, Show } from "solid-js";
-import { Patient } from "../api/therapist";
+import { type Component, For, Show } from "solid-js";
+import type { Patient } from "@/api/therapist";
 
 interface PatientSelectorProps {
   patients: Patient[] | undefined;

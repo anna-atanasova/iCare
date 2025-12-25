@@ -1,4 +1,4 @@
-import { getAuthHeader } from "./auth";
+import { getAuthHeader } from "@/api/auth";
 
 const API_BASE_URL = "http://localhost:8080/api";
 

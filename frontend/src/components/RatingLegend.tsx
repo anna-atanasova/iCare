@@ -1,4 +1,4 @@
-import { Component } from "solid-js";
+import type { Component } from "solid-js";
 
 const ratings = [
   { color: "red", range: "1-2", label: "Very Bad" },

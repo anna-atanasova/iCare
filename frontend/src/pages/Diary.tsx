@@ -1,22 +1,22 @@
 import {
-  Component,
+  type Component,
   createEffect,
   createResource,
   createSignal,
   Show,
 } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { useAuth } from "../context/AuthContext";
-import { diaryApi, DiaryEntry } from "../api/diary";
-import { therapistApi } from "../api/therapist";
-import CalendarHeader from "../components/CalendarHeader";
-import DayHeaders from "../components/DayHeaders";
-import CalendarGrid from "../components/CalendarGrid";
-import RatingLegend from "../components/RatingLegend";
-import DiaryModal from "../components/DiaryModal";
-import PatientSelector from "../components/PatientSelector";
-import { getMonthName, dateToString, getTodayString } from "../utils";
-import { UserType } from "../enums/UserType";
+import { useAuth } from "@/context/AuthContext";
+import { diaryApi, type DiaryEntry } from "@/api/diary";
+import { therapistApi } from "@/api/therapist";
+import CalendarHeader from "@/components/CalendarHeader";
+import DayHeaders from "@/components/DayHeaders";
+import CalendarGrid from "@/components/CalendarGrid";
+import RatingLegend from "@/components/RatingLegend";
+import DiaryModal from "@/components/DiaryModal";
+import PatientSelector from "@/components/PatientSelector";
+import { dateToString, getMonthName, getTodayString } from "@/utils";
+import { UserType } from "@/enums/UserType";
 
 const Diary: Component = () => {
   const { user, isAuthenticated } = useAuth();

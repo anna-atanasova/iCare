@@ -1,6 +1,6 @@
-import { Component } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
+import type { Component } from "solid-js";
 
 const UserMenu: Component = () => {
   const { user, logout } = useAuth();

@@ -1,10 +1,16 @@
-import { Component, createEffect, createResource, For, Show } from "solid-js";
+import {
+  type Component,
+  createEffect,
+  createResource,
+  For,
+  Show,
+} from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { useAuth } from "../context/AuthContext";
-import { therapistApi } from "../api/therapist";
-import { patientApi } from "../api/patient";
-import TherapistCard from "../components/TherapistCard";
-import { UserType } from "../enums/UserType";
+import { useAuth } from "@/context/AuthContext";
+import { therapistApi } from "@/api/therapist";
+import { patientApi } from "@/api/patient";
+import TherapistCard from "@/components/TherapistCard";
+import { UserType } from "@/enums/UserType";
 
 const Therapists: Component = () => {
   const { user, isAuthenticated } = useAuth();

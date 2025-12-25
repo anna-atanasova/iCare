@@ -1,12 +1,12 @@
-import { Component, createSignal, Show } from "solid-js";
+import { type Component, createSignal, Show } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
+import { validatePassword, validateUsername } from "@/utils/userValidators";
 import {
   authApi,
-  RegisterPatientRequest,
-  RegisterTherapistRequest,
-} from "../api/auth";
-import { validatePassword, validateUsername } from "../utils/userValidators";
+  type RegisterPatientRequest,
+  type RegisterTherapistRequest,
+} from "@/api/auth";
 
 type UserType = "patient" | "therapist";
 

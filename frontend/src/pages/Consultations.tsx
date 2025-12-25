@@ -1,24 +1,24 @@
 import {
-  Component,
+  type Component,
   createEffect,
   createResource,
   createSignal,
   Show,
 } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import {
   consultationApi,
-  Consultation,
-  CreateConsultationRequest,
-  UpdateConsultationRequest,
+  type Consultation,
+  type CreateConsultationRequest,
+  type UpdateConsultationRequest,
   isConsultationPaid,
-} from "../api/consultation";
+} from "@/api/consultation";
 import ConsultationTable from "../components/ConsultationTable";
 import ConsultationModal from "../components/ConsultationModal";
-import { patientApi } from "../api/patient";
-import { Therapy } from "../api/therapy";
-import { UserType } from "../enums/UserType";
+import { patientApi } from "@/api/patient";
+import { UserType } from "@/enums/UserType";
+import type { Therapy } from "@/api/therapy";
 
 const Consultations: Component = () => {
   const { user, isAuthenticated } = useAuth();

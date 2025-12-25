@@ -1,6 +1,6 @@
-import { Component, Show } from "solid-js";
-import { Consultation, isConsultationPaid } from "../api/consultation";
-import { formatDate } from "../utils";
+import { type Component, Show } from "solid-js";
+import { type Consultation, isConsultationPaid } from "@/api/consultation";
+import { formatDate } from "@/utils";
 
 interface ConsultationRowProps {
   consultation: Consultation;

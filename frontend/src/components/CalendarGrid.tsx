@@ -1,7 +1,7 @@
-import { Component, For } from "solid-js";
-import CalendarDay from "./CalendarDay";
-import { DiaryEntry } from "../api/diary";
-import { isFutureDate, isTodayDate } from "../utils";
+import { type Component, For } from "solid-js";
+import CalendarDay from "@/components/CalendarDay";
+import { isFutureDate, isTodayDate } from "@/utils";
+import type { DiaryEntry } from "@/api/diary";
 
 interface CalendarGridProps {
   days: Array<{

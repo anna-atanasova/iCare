@@ -1,6 +1,6 @@
-import { Component, For } from "solid-js";
-import { Consultation } from "../api/consultation";
-import ConsultationRow from "./ConsultationRow";
+import { type Component, For } from "solid-js";
+import ConsultationRow from "@/components/ConsultationRow";
+import type { Consultation } from "@/api/consultation";
 
 interface ConsultationTableProps {
   consultations: Consultation[];

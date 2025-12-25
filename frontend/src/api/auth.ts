@@ -1,4 +1,4 @@
-import { UserType } from "../enums/UserType";
+import { UserType } from "@/enums/UserType";
 
 const API_BASE_URL = "http://localhost:8080/api";
 

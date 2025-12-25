@@ -1,4 +1,4 @@
-import { Component } from "solid-js";
+import type { Component } from "solid-js";
 import { Route, Router } from "@solidjs/router";
 import { AuthProvider } from "./context/AuthContext";
 import Header from "./components/Header";

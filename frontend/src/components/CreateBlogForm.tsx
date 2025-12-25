@@ -1,4 +1,4 @@
-import { Component, createSignal } from "solid-js";
+import { type Component, createSignal } from "solid-js";
 
 interface CreateBlogFormProps {
   onSubmit: (title: string, content: string) => Promise<void>;

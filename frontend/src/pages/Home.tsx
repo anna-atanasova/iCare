@@ -1,4 +1,4 @@
-import { Component } from "solid-js";
+import type { Component } from "solid-js";
 
 const Home: Component = () => (
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

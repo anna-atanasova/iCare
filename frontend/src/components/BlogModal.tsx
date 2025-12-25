@@ -1,8 +1,8 @@
-import { Component, createSignal, createEffect, Show } from "solid-js";
-import { BlogPost } from "../api/blog";
-import CommentSection from "./CommentSection";
-import { formatDate } from "../utils";
-import { useAuth } from "../context/AuthContext";
+import { type Component, createSignal, createEffect, Show } from "solid-js";
+import CommentSection from "@/components/CommentSection";
+import { formatDate } from "@/utils";
+import { useAuth } from "@/context/AuthContext";
+import type { BlogPost } from "@/api/blog";
 
 interface BlogModalProps {
   blog: BlogPost;

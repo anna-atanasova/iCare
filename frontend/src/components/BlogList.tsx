@@ -1,6 +1,6 @@
-import { Component, For, Show } from "solid-js";
-import { BlogPost } from "../api/blog";
-import BlogCard from "./BlogCard";
+import { type Component, For, Show } from "solid-js";
+import BlogCard from "@/components/BlogCard";
+import type { BlogPost } from "@/api/blog";
 
 interface BlogListProps {
   blogs: BlogPost[];

@@ -1,7 +1,7 @@
-import { Component, For, Show, createSignal } from "solid-js";
-import { TherapistInfo } from "../api/therapist";
-import { patientApi } from "../api/patient";
-import { formatDateWithWeekday } from "../utils";
+import { type Component, For, Show, createSignal } from "solid-js";
+import type { TherapistInfo } from "@/api/therapist";
+import { patientApi } from "@/api/patient";
+import { formatDateWithWeekday } from "@/utils";
 
 interface TherapistCardProps {
   therapist: TherapistInfo;

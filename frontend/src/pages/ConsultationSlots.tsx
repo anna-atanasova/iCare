@@ -1,5 +1,5 @@
 import {
-  Component,
+  type Component,
   createEffect,
   createResource,
   createSignal,
@@ -7,10 +7,10 @@ import {
   Show,
 } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { useAuth } from "../context/AuthContext";
-import { consultationSlotApi } from "../api/consultationSlot";
-import { formatDateWithWeekday, getTodayString } from "../utils";
-import { UserType } from "../enums/UserType";
+import { useAuth } from "@/context/AuthContext";
+import { consultationSlotApi } from "@/api/consultationSlot";
+import { formatDateWithWeekday, getTodayString } from "@/utils";
+import { UserType } from "@/enums/UserType";
 
 const ConsultationSlots: Component = () => {
   const { user, isAuthenticated } = useAuth();

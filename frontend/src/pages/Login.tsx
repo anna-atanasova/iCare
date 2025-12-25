@@ -1,6 +1,6 @@
-import { Component, createSignal, Show } from "solid-js";
-import LoginForm from "../components/LoginForm";
-import Register from "../components/Register";
+import { type Component, createSignal, Show } from "solid-js";
+import LoginForm from "@/components/LoginForm";
+import Register from "@/components/Register";
 
 type ViewMode = "login" | "register";
 

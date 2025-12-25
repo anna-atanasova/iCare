@@ -1,6 +1,6 @@
-import { Component, createSignal, For, Show } from "solid-js";
-import { Therapy } from "../api/therapy";
-import { formatDate } from "../utils";
+import { type Component, createSignal, For, Show } from "solid-js";
+import { formatDate } from "@/utils";
+import type { Therapy } from "@/api/therapy";
 
 interface TherapyListProps {
   therapies: Therapy[];

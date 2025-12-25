@@ -5,7 +5,7 @@ import {
   JSX,
   createEffect,
 } from "solid-js";
-import type { LoginResponse } from "../api/auth";
+import type { LoginResponse } from "@/api/auth";
 
 interface AuthContextType {
   user: () => LoginResponse | null;
