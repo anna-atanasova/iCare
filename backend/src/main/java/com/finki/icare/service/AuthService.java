@@ -4,6 +4,7 @@ import com.finki.icare.dto.LoginRequest;
 import com.finki.icare.dto.LoginResponse;
 import com.finki.icare.dto.RegisterPatientRequest;
 import com.finki.icare.dto.RegisterTherapistRequest;
+import com.finki.icare.enums.UserType;
 import com.finki.icare.exceptions.ICareException;
 import com.finki.icare.model.Patient;
 import com.finki.icare.model.Therapist;
@@ -137,13 +138,13 @@ public class AuthService {
 
         Therapist savedTherapist = therapistRepository.save(therapist);
 
-        String token = jwtService.generateToken(savedTherapist.getUsername(), savedTherapist.getIdUser(), "THERAPIST");
+        String token = jwtService.generateToken(savedTherapist.getUsername(), savedTherapist.getIdUser(), UserType.THERAPIST);
 
         return new LoginResponse(
                 token,
                 savedTherapist.getUsername(),
                 savedTherapist.getEmail(),
-                "THERAPIST",
+                UserType.THERAPIST,
                 savedTherapist.getIdUser()
         );
     }

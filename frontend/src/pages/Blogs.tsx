@@ -11,6 +11,7 @@ import { blogApi, BlogPost } from "../api/blog";
 import BlogList from "../components/BlogList";
 import BlogModal from "../components/BlogModal";
 import CreateBlogForm from "../components/CreateBlogForm";
+import { UserType } from "../enums/UserType";
 
 const Blogs: Component = () => {
   const { user, isAuthenticated } = useAuth();
@@ -39,7 +40,7 @@ const Blogs: Component = () => {
     }
 
     const currentUser = user();
-    if (currentUser?.userType !== "PATIENT") {
+    if (currentUser?.userType !== UserType.PATIENT) {
       navigate("/", { replace: true });
     }
   });

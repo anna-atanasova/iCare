@@ -3,6 +3,7 @@ package com.finki.icare.service;
 import com.finki.icare.dto.ConsultationDTO;
 import com.finki.icare.dto.CreateConsultationRequest;
 import com.finki.icare.dto.UpdateConsultationRequest;
+import com.finki.icare.enums.UserType;
 import com.finki.icare.exceptions.ICareException;
 import com.finki.icare.mapper.ConsultationMapper;
 import com.finki.icare.model.Consultation;
@@ -28,7 +29,7 @@ public class ConsultationService {
     private final ConsultationMapper consultationMapper;
 
     public List<ConsultationDTO> getTherapistConsultations(Integer therapistId, Integer currentUserId, String userType) {
-        if (!"THERAPIST".equals(userType) || !therapistId.equals(currentUserId)) {
+        if (!UserType.THERAPIST.equals(userType) || !therapistId.equals(currentUserId)) {
             throw ICareException.forbidden("You do not have permission to view these consultations");
         }
 
@@ -39,7 +40,7 @@ public class ConsultationService {
     }
 
     public List<ConsultationDTO> getPatientConsultations(Integer patientId, Integer currentUserId, String userType) {
-        if (!"PATIENT".equals(userType) || !patientId.equals(currentUserId)) {
+        if (!UserType.PATIENT.equals(userType) || !patientId.equals(currentUserId)) {
             throw ICareException.forbidden("You do not have permission to view these consultations");
         }
 
@@ -51,7 +52,7 @@ public class ConsultationService {
 
     @Transactional
     public ConsultationDTO createConsultation(CreateConsultationRequest request, Integer currentUserId, String userType) {
-        if (!"THERAPIST".equals(userType)) {
+        if (!UserType.THERAPIST.equals(userType)) {
             throw ICareException.forbidden("Only therapists can create consultation records");
         }
 
@@ -90,7 +91,7 @@ public class ConsultationService {
 
     @Transactional
     public ConsultationDTO updateConsultation(Integer consultationId, UpdateConsultationRequest request, Integer currentUserId, String userType) {
-        if (!"THERAPIST".equals(userType)) {
+        if (!UserType.THERAPIST.equals(userType)) {
             throw ICareException.forbidden("Only therapists can update consultation records");
         }
 
@@ -130,7 +131,7 @@ public class ConsultationService {
     }
 
     public void deleteConsultation(Integer consultationId, Integer currentUserId, String userType) {
-        if (!"THERAPIST".equals(userType)) {
+        if (!UserType.THERAPIST.equals(userType)) {
             throw ICareException.forbidden("Only therapists can delete consultation records");
         }
 

@@ -16,6 +16,7 @@ import RatingLegend from "../components/RatingLegend";
 import DiaryModal from "../components/DiaryModal";
 import PatientSelector from "../components/PatientSelector";
 import { getMonthName, dateToString, getTodayString } from "../utils";
+import { UserType } from "../enums/UserType";
 
 const Diary: Component = () => {
   const { user, isAuthenticated } = useAuth();
@@ -35,7 +36,7 @@ const Diary: Component = () => {
   const [selectedPatientId, setSelectedPatientId] = createSignal<number | null>(
     null,
   );
-  const isTherapist = () => user()?.userType === "THERAPIST";
+  const isTherapist = () => user()?.userType === UserType.THERAPIST;
 
   const [patients] = createResource(
     () => ({

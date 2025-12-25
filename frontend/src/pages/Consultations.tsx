@@ -18,6 +18,7 @@ import ConsultationTable from "../components/ConsultationTable";
 import ConsultationModal from "../components/ConsultationModal";
 import { patientApi } from "../api/patient";
 import { Therapy } from "../api/therapy";
+import { UserType } from "../enums/UserType";
 
 const Consultations: Component = () => {
   const { user, isAuthenticated } = useAuth();
@@ -36,8 +37,8 @@ const Consultations: Component = () => {
   const [newTherapies, setNewTherapies] = createSignal<Therapy[]>([]);
   const [existingTherapies, setExistingTherapies] = createSignal<Therapy[]>([]);
 
-  const isTherapist = () => user()?.userType === "THERAPIST";
-  const isPatient = () => user()?.userType === "PATIENT";
+  const isTherapist = () => user()?.userType === UserType.THERAPIST;
+  const isPatient = () => user()?.userType === UserType.PATIENT;
 
   const [patients] = createResource(
     () => ({

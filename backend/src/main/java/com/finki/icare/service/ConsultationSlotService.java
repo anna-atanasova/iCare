@@ -2,6 +2,7 @@ package com.finki.icare.service;
 
 import com.finki.icare.dto.AddSlotRequest;
 import com.finki.icare.dto.ConsultationSlotsDTO;
+import com.finki.icare.enums.UserType;
 import com.finki.icare.exceptions.ICareException;
 import com.finki.icare.model.Therapist;
 import com.finki.icare.repository.TherapistRepository;
@@ -21,7 +22,7 @@ public class ConsultationSlotService {
     private final TherapistRepository therapistRepository;
 
     public ConsultationSlotsDTO getTherapistSlots(Integer therapistId, String userType) {
-        if (!"THERAPIST".equals(userType)) {
+        if (!UserType.THERAPIST.equals(userType)) {
             throw ICareException.forbidden("Only therapists can manage consultation slots");
         }
 
@@ -37,7 +38,7 @@ public class ConsultationSlotService {
     }
 
     public ConsultationSlotsDTO addSlot(Integer therapistId, AddSlotRequest request, Integer currentUserId, String userType) {
-        if (!"THERAPIST".equals(userType)) {
+        if (!UserType.THERAPIST.equals(userType)) {
             throw ICareException.forbidden("Only therapists can manage consultation slots");
         }
 
@@ -71,7 +72,7 @@ public class ConsultationSlotService {
     }
 
     public ConsultationSlotsDTO removeSlot(Integer therapistId, LocalDate date, Integer currentUserId, String userType) {
-        if (!"THERAPIST".equals(userType)) {
+        if (!UserType.THERAPIST.equals(userType)) {
             throw ICareException.forbidden("Only therapists can manage consultation slots");
         }
 

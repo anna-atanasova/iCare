@@ -1,3 +1,5 @@
+import { UserType } from "../enums/UserType";
+
 const API_BASE_URL = "http://localhost:8080/api";
 
 export interface LoginRequest {
@@ -9,7 +11,7 @@ export interface LoginResponse {
   token: string;
   username: string;
   email: string;
-  userType: "PATIENT" | "THERAPIST";
+  userType: UserType;
   userId: number;
 }
 

@@ -3,6 +3,7 @@ package com.finki.icare.service;
 import com.finki.icare.dto.CreateDiaryEntryRequest;
 import com.finki.icare.dto.DiaryEntryDTO;
 import com.finki.icare.dto.UpdateDiaryEntryRequest;
+import com.finki.icare.enums.UserType;
 import com.finki.icare.exceptions.ICareException;
 import com.finki.icare.mapper.DiaryMapper;
 import com.finki.icare.model.Diary;
@@ -36,7 +37,7 @@ public class DiaryService {
         return diaries.stream()
                 .map(diary -> {
                     DiaryEntryDTO dto = diaryMapper.toDTO(diary);
-                    if ("THERAPIST".equals(userType)) {
+                    if (UserType.THERAPIST.equals(userType)) {
                         dto.setContent(null);
                     }
                     return dto;
@@ -45,7 +46,7 @@ public class DiaryService {
     }
 
     public DiaryEntryDTO createDiaryEntry(CreateDiaryEntryRequest request, Integer currentUserId, String userType) {
-        if (!"PATIENT".equals(userType)) {
+        if (!UserType.PATIENT.equals(userType)) {
             throw ICareException.forbidden("Only patients can create diary entries");
         }
 
@@ -80,7 +81,7 @@ public class DiaryService {
             throw ICareException.forbidden("You do not have permission to update this diary entry");
         }
 
-        if (!"PATIENT".equals(userType) || !diary.getPatient().getIdUser().equals(currentUserId)) {
+        if (!UserType.PATIENT.equals(userType) || !diary.getPatient().getIdUser().equals(currentUserId)) {
             throw ICareException.forbidden("Only the owner of this diary entry can update it");
         }
 
@@ -109,7 +110,7 @@ public class DiaryService {
             throw ICareException.badRequest("You can only delete today's diary entry");
         }
 
-        if (!"PATIENT".equals(userType) || !diary.getPatient().getIdUser().equals(currentUserId)) {
+        if (!UserType.PATIENT.equals(userType) || !diary.getPatient().getIdUser().equals(currentUserId)) {
             throw ICareException.forbidden("Only the patient who created the entry can delete it");
         }
 
@@ -117,11 +118,11 @@ public class DiaryService {
     }
 
     private boolean canAccessDiary(Integer patientId, Integer currentUserId, String userType) {
-        if ("PATIENT".equals(userType) && patientId.equals(currentUserId)) {
+        if (UserType.PATIENT.equals(userType) && patientId.equals(currentUserId)) {
             return true;
         }
 
-        if ("THERAPIST".equals(userType)) {
+        if (UserType.THERAPIST.equals(userType)) {
             return patientRepository.isPatientAssignedToTherapist(patientId, currentUserId);
         }
 

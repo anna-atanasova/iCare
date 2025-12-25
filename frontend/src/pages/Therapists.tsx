@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { therapistApi } from "../api/therapist";
 import { patientApi } from "../api/patient";
 import TherapistCard from "../components/TherapistCard";
+import { UserType } from "../enums/UserType";
 
 const Therapists: Component = () => {
   const { user, isAuthenticated } = useAuth();
@@ -36,7 +37,7 @@ const Therapists: Component = () => {
     }
 
     const currentUser = user();
-    if (currentUser?.userType !== "PATIENT") {
+    if (currentUser?.userType !== UserType.PATIENT) {
       navigate("/", { replace: true });
     }
   });

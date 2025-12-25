@@ -3,6 +3,7 @@ package com.finki.icare.service;
 import com.finki.icare.dto.CreateTherapyRequest;
 import com.finki.icare.dto.TherapyDTO;
 import com.finki.icare.dto.UpdateTherapyRequest;
+import com.finki.icare.enums.UserType;
 import com.finki.icare.exceptions.ICareException;
 import com.finki.icare.mapper.TherapyMapper;
 import com.finki.icare.model.Consultation;
@@ -28,7 +29,7 @@ public class TherapyService {
         Consultation consultation = consultationRepository.findById(consultationId)
                 .orElseThrow(() -> ICareException.notFound("Consultation not found"));
 
-        if (!"THERAPIST".equals(userType) || !consultation.getTherapist().getIdUser().equals(currentUserId)) {
+        if (!UserType.THERAPIST.equals(userType) || !consultation.getTherapist().getIdUser().equals(currentUserId)) {
             throw ICareException.forbidden("You do not have permission to view therapies for this consultation");
         }
 
@@ -39,7 +40,7 @@ public class TherapyService {
     }
 
     public TherapyDTO createTherapy(Integer consultationId, CreateTherapyRequest request, Integer currentUserId, String userType) {
-        if (!"THERAPIST".equals(userType)) {
+        if (!UserType.THERAPIST.equals(userType)) {
             throw ICareException.forbidden("Only therapists can create therapies");
         }
 
@@ -63,7 +64,7 @@ public class TherapyService {
     }
 
     public TherapyDTO updateTherapy(Integer therapyId, UpdateTherapyRequest request, Integer currentUserId, String userType) {
-        if (!"THERAPIST".equals(userType)) {
+        if (!UserType.THERAPIST.equals(userType)) {
             throw ICareException.forbidden("Only therapists can update therapies");
         }
 
@@ -91,7 +92,7 @@ public class TherapyService {
     }
 
     public void deleteTherapy(Integer therapyId, Integer currentUserId, String userType) {
-        if (!"THERAPIST".equals(userType)) {
+        if (!UserType.THERAPIST.equals(userType)) {
             throw ICareException.forbidden("Only therapists can delete therapies");
         }
 

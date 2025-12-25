@@ -10,6 +10,7 @@ import { useNavigate } from "@solidjs/router";
 import { useAuth } from "../context/AuthContext";
 import { consultationSlotApi } from "../api/consultationSlot";
 import { formatDateWithWeekday, getTodayString } from "../utils";
+import { UserType } from "../enums/UserType";
 
 const ConsultationSlots: Component = () => {
   const { user, isAuthenticated } = useAuth();
@@ -36,7 +37,7 @@ const ConsultationSlots: Component = () => {
     }
 
     const currentUser = user();
-    if (currentUser?.userType !== "THERAPIST") {
+    if (currentUser?.userType !== UserType.THERAPIST) {
       navigate("/", { replace: true });
     }
   });

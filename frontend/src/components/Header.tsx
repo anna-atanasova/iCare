@@ -3,6 +3,7 @@ import { A } from "@solidjs/router";
 import { useAuth } from "../context/AuthContext";
 import UserMenu from "./UserMenu";
 import logo from "../../assets/icare.png";
+import { UserType } from "../enums/UserType";
 
 const Header: Component = () => {
   const { isAuthenticated, user } = useAuth();
@@ -58,7 +59,11 @@ const Header: Component = () => {
               </A>
             </Show>
 
-            <Show when={isAuthenticated() && user()?.userType === "THERAPIST"}>
+            <Show
+              when={
+                isAuthenticated() && user()?.userType === UserType.THERAPIST
+              }
+            >
               <A
                 href="/consultation-slots"
                 class="text-gray-700 hover:text-blue-600 font-medium transition-colors"
