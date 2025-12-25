@@ -38,6 +38,17 @@ public class ConsultationService {
                 .toList();
     }
 
+    public List<ConsultationDTO> getPatientConsultations(Integer patientId, Integer currentUserId, String userType) {
+        if (!"PATIENT".equals(userType) || !patientId.equals(currentUserId)) {
+            throw ICareException.forbidden("You do not have permission to view these consultations");
+        }
+
+        List<Consultation> consultations = consultationRepository.findByPatientId(patientId);
+        return consultations.stream()
+                .map(consultationMapper::toDTO)
+                .toList();
+    }
+
     @Transactional
     public ConsultationDTO createConsultation(CreateConsultationRequest request, Integer currentUserId, String userType) {
         if (!"THERAPIST".equals(userType)) {

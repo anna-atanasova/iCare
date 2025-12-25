@@ -7,6 +7,7 @@ interface ConsultationTableProps {
   onEdit: (consultation: Consultation) => void;
   onDelete: (id: number) => void;
   onTogglePayment: (consultation: Consultation) => void;
+  readOnly?: boolean;
 }
 
 const ConsultationTable: Component<ConsultationTableProps> = (props) => (
@@ -18,7 +19,7 @@ const ConsultationTable: Component<ConsultationTableProps> = (props) => (
             Date
           </th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Patient
+            {props.readOnly ? "Therapist" : "Patient"}
           </th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
             Price
@@ -27,7 +28,7 @@ const ConsultationTable: Component<ConsultationTableProps> = (props) => (
             Payment Status
           </th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Actions
+            {props.readOnly ? "Details" : "Actions"}
           </th>
         </tr>
       </thead>
@@ -39,6 +40,7 @@ const ConsultationTable: Component<ConsultationTableProps> = (props) => (
               onEdit={props.onEdit}
               onDelete={props.onDelete}
               onTogglePayment={props.onTogglePayment}
+              readOnly={props.readOnly}
             />
           )}
         </For>

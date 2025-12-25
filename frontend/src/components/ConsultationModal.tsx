@@ -24,6 +24,7 @@ interface ConsultationModalProps {
   onFormChange: (data: ConsultationFormData) => void;
   onNewTherapiesChange: (therapies: Therapy[]) => void;
   onExistingTherapiesChange: (therapies: Therapy[]) => void;
+  readOnly?: boolean;
 }
 
 const ConsultationModal: Component<ConsultationModalProps> = (props) => (
@@ -36,9 +37,11 @@ const ConsultationModal: Component<ConsultationModalProps> = (props) => (
       onClick={(e) => e.stopPropagation()}
     >
       <h2 class="text-2xl font-bold mb-4">
-        {props.editingConsultation
-          ? "Edit Consultation"
-          : "Log New Consultation"}
+        {props.readOnly
+          ? "Consultation Details"
+          : props.editingConsultation
+            ? "Edit Consultation"
+            : "Log New Consultation"}
       </h2>
 
       <form onSubmit={props.onSubmit}>
@@ -58,6 +61,7 @@ const ConsultationModal: Component<ConsultationModalProps> = (props) => (
                   })
                 }
                 required
+                disabled={props.readOnly}
               >
                 <For each={props.patients}>
                   {(patient) => (
@@ -85,6 +89,7 @@ const ConsultationModal: Component<ConsultationModalProps> = (props) => (
                 })
               }
               required
+              disabled={props.readOnly}
             />
           </div>
 
@@ -96,7 +101,7 @@ const ConsultationModal: Component<ConsultationModalProps> = (props) => (
               type="number"
               step="0.01"
               min="0"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${props.readOnly ? "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" : ""}`}
               value={props.formData.price}
               onChange={(e) =>
                 props.onFormChange({
@@ -105,6 +110,7 @@ const ConsultationModal: Component<ConsultationModalProps> = (props) => (
                 })
               }
               required
+              disabled={props.readOnly}
             />
           </div>
 
@@ -123,36 +129,39 @@ const ConsultationModal: Component<ConsultationModalProps> = (props) => (
                 })
               }
               placeholder="Enter any advice or notes from the consultation..."
+              disabled={props.readOnly}
             />
           </div>
 
-          <div>
-            <label class="flex items-center space-x-2 cursor-pointer">
-              <input
-                type="checkbox"
-                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
-                checked={props.formData.dateOfPayment !== null}
-                onChange={(e) => {
-                  if (e.currentTarget.checked) {
-                    props.onFormChange({
-                      ...props.formData,
-                      dateOfPayment: new Date().toISOString().split("T")[0],
-                    });
-                  } else {
-                    props.onFormChange({
-                      ...props.formData,
-                      dateOfPayment: null,
-                    });
-                  }
-                }}
-              />
-              <span class="text-sm font-medium text-gray-700">
-                Mark as paid
-              </span>
-            </label>
-          </div>
+          <Show when={!props.readOnly}>
+            <div>
+              <label class="flex items-center space-x-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+                  checked={props.formData.dateOfPayment !== null}
+                  onChange={(e) => {
+                    if (e.currentTarget.checked) {
+                      props.onFormChange({
+                        ...props.formData,
+                        dateOfPayment: new Date().toISOString().split("T")[0],
+                      });
+                    } else {
+                      props.onFormChange({
+                        ...props.formData,
+                        dateOfPayment: null,
+                      });
+                    }
+                  }}
+                />
+                <span class="text-sm font-medium text-gray-700">
+                  Mark as paid
+                </span>
+              </label>
+            </div>
+          </Show>
 
-          <Show when={props.formData.dateOfPayment !== null}>
+          <Show when={props.formData.dateOfPayment !== null && !props.readOnly}>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">
                 Payment Date
@@ -167,6 +176,7 @@ const ConsultationModal: Component<ConsultationModalProps> = (props) => (
                     dateOfPayment: e.currentTarget.value,
                   })
                 }
+                disabled={props.readOnly}
               />
             </div>
           </Show>
@@ -175,42 +185,59 @@ const ConsultationModal: Component<ConsultationModalProps> = (props) => (
         <Show when={props.editingConsultation}>
           <div class="mt-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-3">
-              Existing Therapies
+              {props.readOnly ? "Prescribed Therapies" : "Existing Therapies"}
             </h3>
             <ExistingTherapyList
               consultationId={props.editingConsultation!.idConsultation}
               therapies={props.existingTherapies}
               onTherapiesChange={props.onExistingTherapiesChange}
+              readOnly={props.readOnly}
             />
           </div>
         </Show>
 
-        <div class="mt-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">
-            <Show when={props.editingConsultation} fallback={<>Therapies</>}>
-              New Therapies to Add
-            </Show>
-          </h3>
-          <TherapyList
-            therapies={props.newTherapies}
-            onPendingTherapiesChange={props.onNewTherapiesChange}
-          />
-        </div>
+        <Show when={!props.readOnly}>
+          <div class="mt-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">
+              <Show when={props.editingConsultation} fallback={<>Therapies</>}>
+                New Therapies to Add
+              </Show>
+            </h3>
+            <TherapyList
+              therapies={props.newTherapies}
+              onPendingTherapiesChange={props.onNewTherapiesChange}
+              readOnly={props.readOnly}
+            />
+          </div>
+        </Show>
 
         <div class="mt-6 flex justify-end space-x-3">
-          <button
-            type="button"
-            onClick={props.onClose}
-            class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition cursor-pointer"
+          <Show
+            when={!props.readOnly}
+            fallback={
+              <button
+                type="button"
+                onClick={props.onClose}
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer"
+              >
+                Close
+              </button>
+            }
           >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer"
-          >
-            {props.editingConsultation ? "Update" : "Create"}
-          </button>
+            <button
+              type="button"
+              onClick={props.onClose}
+              class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer"
+            >
+              {props.editingConsultation ? "Update" : "Create"}
+            </button>
+          </Show>
         </div>
       </form>
     </div>

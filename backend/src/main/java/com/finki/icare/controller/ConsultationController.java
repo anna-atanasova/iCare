@@ -35,6 +35,20 @@ public class ConsultationController {
         return ResponseEntity.ok(consultations);
     }
 
+    @GetMapping("/patient/{patientId}")
+    public ResponseEntity<List<ConsultationDTO>> getPatientConsultations(
+            @PathVariable Integer patientId,
+            Authentication authentication
+    ) {
+        Integer currentUserId = AuthUtils.getUserId(authentication);
+        String userType = AuthUtils.getUserType(authentication);
+
+        List<ConsultationDTO> consultations = consultationService.getPatientConsultations(
+                patientId, currentUserId, userType
+        );
+        return ResponseEntity.ok(consultations);
+    }
+
     @PostMapping
     public ResponseEntity<ConsultationDTO> createConsultation(
             @RequestBody CreateConsultationRequest request,

@@ -37,6 +37,7 @@ const Consultations: Component = () => {
   const [existingTherapies, setExistingTherapies] = createSignal<Therapy[]>([]);
 
   const isTherapist = () => user()?.userType === "THERAPIST";
+  const isPatient = () => user()?.userType === "PATIENT";
 
   const [patients] = createResource(
     () => ({
@@ -54,22 +55,24 @@ const Consultations: Component = () => {
       authenticated: isAuthenticated(),
       userId: user()?.userId,
       isTherapist: isTherapist(),
+      isPatient: isPatient(),
     }),
     async (params) => {
-      if (!params.authenticated || !params.userId || !params.isTherapist)
-        return [];
-      return await consultationApi.getTherapistConsultations(params.userId);
+      if (!params.authenticated || !params.userId) return [];
+
+      if (params.isTherapist) {
+        return await consultationApi.getTherapistConsultations(params.userId);
+      } else if (params.isPatient) {
+        return await consultationApi.getPatientConsultations(params.userId);
+      }
+
+      return [];
     },
   );
 
   createEffect(() => {
     if (!isAuthenticated()) {
       navigate("/login", { replace: true });
-      return;
-    }
-
-    if (!isTherapist()) {
-      navigate("/", { replace: true });
     }
   });
 
@@ -180,13 +183,17 @@ const Consultations: Component = () => {
   return (
     <div class="container mx-auto px-4 py-8 max-w-7xl">
       <div class="mb-6 flex justify-between items-center">
-        <h1 class="text-3xl font-bold text-gray-900">Consultation Records</h1>
-        <button
-          onClick={openCreateModal}
-          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer"
-        >
-          Log New Consultation
-        </button>
+        <h1 class="text-3xl font-bold text-gray-900">
+          {isTherapist() ? "Consultation Records" : "My Consultations"}
+        </h1>
+        <Show when={isTherapist()}>
+          <button
+            onClick={openCreateModal}
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer"
+          >
+            Log New Consultation
+          </button>
+        </Show>
       </div>
 
       <Show
@@ -207,6 +214,7 @@ const Consultations: Component = () => {
             onEdit={openEditModal}
             onDelete={handleDelete}
             onTogglePayment={togglePaymentStatus}
+            readOnly={isPatient()}
           />
         </Show>
       </Show>
@@ -226,6 +234,7 @@ const Consultations: Component = () => {
             setExistingTherapies(therapies);
             refetch();
           }}
+          readOnly={isPatient()}
         />
       </Show>
     </div>

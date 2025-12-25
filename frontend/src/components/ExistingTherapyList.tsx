@@ -6,6 +6,7 @@ interface ExistingTherapyListProps {
   consultationId: number;
   therapies: Therapy[];
   onTherapiesChange: (therapies: Therapy[]) => void;
+  readOnly?: boolean;
 }
 
 const ExistingTherapyList: Component<ExistingTherapyListProps> = (props) => {
@@ -98,22 +99,24 @@ const ExistingTherapyList: Component<ExistingTherapyListProps> = (props) => {
                         {formatDate(therapy.expDate)}
                       </div>
                     </div>
-                    <div class="flex space-x-2 ml-4">
-                      <button
-                        type="button"
-                        onClick={() => startEditing(therapy)}
-                        class="text-xs text-blue-600 hover:text-blue-800 cursor-pointer"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(therapy.idTherapy)}
-                        class="text-xs text-red-600 hover:text-red-800 cursor-pointer"
-                      >
-                        Delete
-                      </button>
-                    </div>
+                    <Show when={!props.readOnly}>
+                      <div class="flex space-x-2 ml-4">
+                        <button
+                          type="button"
+                          onClick={() => startEditing(therapy)}
+                          class="text-xs text-blue-600 hover:text-blue-800 cursor-pointer"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(therapy.idTherapy)}
+                          class="text-xs text-red-600 hover:text-red-800 cursor-pointer"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </Show>
                   </div>
                 </div>
               }

@@ -5,6 +5,7 @@ import { formatDate } from "../utils";
 interface TherapyListProps {
   therapies: Therapy[];
   onPendingTherapiesChange: (therapies: Therapy[]) => void;
+  readOnly?: boolean;
 }
 
 const TherapyList: Component<TherapyListProps> = (props) => {
@@ -187,7 +188,7 @@ const TherapyList: Component<TherapyListProps> = (props) => {
                       {formatDate(therapy.expDate)}
                     </div>
                   </div>
-                  <Show when={!isAdding() && !editingId()}>
+                  <Show when={!isAdding() && !editingId() && !props.readOnly}>
                     <div class="flex space-x-2 ml-4">
                       <button
                         type="button"

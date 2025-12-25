@@ -63,6 +63,24 @@ export const consultationApi = {
     return response.json();
   },
 
+  getPatientConsultations: async (
+    patientId: number,
+  ): Promise<Consultation[]> => {
+    const response = await fetch(
+      `${API_BASE_URL}/consultations/patient/${patientId}`,
+      {
+        headers: getAuthHeader(),
+      },
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to fetch consultations");
+    }
+
+    return response.json();
+  },
+
   createConsultation: async (
     data: CreateConsultationRequest,
   ): Promise<Consultation> => {
