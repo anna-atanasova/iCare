@@ -1,7 +1,5 @@
-import { getAuthHeader, getAuthHeaderJson } from "@/api/auth";
+import { apiClient } from "@/api/client";
 import type { Therapy } from "@/api/therapy";
-
-const API_BASE_URL = "http://localhost:8080/api";
 
 export interface Consultation {
   idConsultation: number;
@@ -47,90 +45,23 @@ export interface UpdateConsultationRequest {
 export const consultationApi = {
   getTherapistConsultations: async (
     therapistId: number,
-  ): Promise<Consultation[]> => {
-    const response = await fetch(
-      `${API_BASE_URL}/consultations/therapist/${therapistId}`,
-      {
-        headers: getAuthHeader(),
-      },
-    );
+  ): Promise<Consultation[]> =>
+    apiClient.get<Consultation[]>(`/consultations/therapist/${therapistId}`),
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to fetch consultations");
-    }
-
-    return response.json();
-  },
-
-  getPatientConsultations: async (
-    patientId: number,
-  ): Promise<Consultation[]> => {
-    const response = await fetch(
-      `${API_BASE_URL}/consultations/patient/${patientId}`,
-      {
-        headers: getAuthHeader(),
-      },
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to fetch consultations");
-    }
-
-    return response.json();
-  },
+  getPatientConsultations: async (patientId: number): Promise<Consultation[]> =>
+    apiClient.get<Consultation[]>(`/consultations/patient/${patientId}`),
 
   createConsultation: async (
     data: CreateConsultationRequest,
-  ): Promise<Consultation> => {
-    const response = await fetch(`${API_BASE_URL}/consultations`, {
-      method: "POST",
-      headers: getAuthHeaderJson(),
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to create consultation");
-    }
-
-    return response.json();
-  },
+  ): Promise<Consultation> =>
+    apiClient.post<Consultation>("/consultations", data),
 
   updateConsultation: async (
     consultationId: number,
     data: UpdateConsultationRequest,
-  ): Promise<Consultation> => {
-    const response = await fetch(
-      `${API_BASE_URL}/consultations/${consultationId}`,
-      {
-        method: "PUT",
-        headers: getAuthHeaderJson(),
-        body: JSON.stringify(data),
-      },
-    );
+  ): Promise<Consultation> =>
+    apiClient.put<Consultation>(`/consultations/${consultationId}`, data),
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to update consultation");
-    }
-
-    return response.json();
-  },
-
-  deleteConsultation: async (consultationId: number): Promise<void> => {
-    const response = await fetch(
-      `${API_BASE_URL}/consultations/${consultationId}`,
-      {
-        method: "DELETE",
-        headers: getAuthHeader(),
-      },
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to delete consultation");
-    }
-  },
+  deleteConsultation: async (consultationId: number): Promise<void> =>
+    apiClient.delete<void>(`/consultations/${consultationId}`),
 };

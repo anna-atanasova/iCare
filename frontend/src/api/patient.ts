@@ -1,6 +1,4 @@
-import { getAuthHeader } from "@/api/auth";
-
-const API_BASE_URL = "http://localhost:8080/api";
+import { apiClient } from "@/api/client";
 
 export interface Patient {
   userId: number;
@@ -10,60 +8,15 @@ export interface Patient {
 }
 
 export const patientApi = {
-  getAllPatients: async (): Promise<Patient[]> => {
-    const response = await fetch(`${API_BASE_URL}/patients`, {
-      headers: getAuthHeader(),
-    });
+  getAllPatients: async (): Promise<Patient[]> =>
+    apiClient.get<Patient[]>("/patients"),
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to fetch patients");
-    }
+  setTherapist: async (therapistId: number): Promise<void> =>
+    apiClient.put<void>(`/patients/therapist/${therapistId}`),
 
-    return response.json();
-  },
+  removeTherapist: async (): Promise<void> =>
+    apiClient.delete<void>("/patients/therapist"),
 
-  setTherapist: async (therapistId: number): Promise<void> => {
-    const response = await fetch(
-      `${API_BASE_URL}/patients/therapist/${therapistId}`,
-      {
-        method: "PUT",
-        headers: getAuthHeader(),
-      },
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to set therapist");
-    }
-  },
-
-  removeTherapist: async (): Promise<void> => {
-    const response = await fetch(`${API_BASE_URL}/patients/therapist`, {
-      method: "DELETE",
-      headers: getAuthHeader(),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to remove therapist");
-    }
-  },
-
-  getCurrentTherapist: async (): Promise<number | null> => {
-    const response = await fetch(`${API_BASE_URL}/patients/therapist`, {
-      headers: getAuthHeader(),
-    });
-
-    if (response.status === 204) {
-      return null;
-    }
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to fetch current therapist");
-    }
-
-    return response.json();
-  },
+  getCurrentTherapist: async (): Promise<number | null> =>
+    apiClient.get<number | null>("/patients/therapist"),
 };

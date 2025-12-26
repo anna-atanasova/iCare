@@ -1,6 +1,4 @@
-import { getAuthHeader, getAuthHeaderJson } from "@/api/auth";
-
-const API_BASE_URL = "http://localhost:8080/api";
+import { apiClient } from "@/api/client";
 
 export interface Comment {
   idComment: number;
@@ -36,137 +34,30 @@ export interface UpdateBlogRequest {
 }
 
 export const blogApi = {
-  getAllBlogs: async (): Promise<BlogPost[]> => {
-    const response = await fetch(`${API_BASE_URL}/blogs`, {
-      headers: getAuthHeader(),
-    });
+  getAllBlogs: async (): Promise<BlogPost[]> =>
+    apiClient.get<BlogPost[]>("/blogs"),
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to fetch blogs");
-    }
+  getBlog: async (id: number): Promise<BlogPost> =>
+    apiClient.get<BlogPost>(`/blogs/${id}`),
 
-    return response.json();
-  },
+  createBlog: async (data: CreateBlogRequest): Promise<BlogPost> =>
+    apiClient.post<BlogPost>("/blogs", data),
 
-  getBlog: async (id: number): Promise<BlogPost> => {
-    const response = await fetch(`${API_BASE_URL}/blogs/${id}`, {
-      headers: getAuthHeader(),
-    });
+  updateBlog: async (id: number, data: UpdateBlogRequest): Promise<BlogPost> =>
+    apiClient.put<BlogPost>(`/blogs/${id}`, data),
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || `Failed to fetch blog with id ${id}`);
-    }
+  deleteBlog: async (id: number): Promise<void> =>
+    apiClient.delete<void>(`/blogs/${id}`),
 
-    return response.json();
-  },
+  toggleLike: async (id: number): Promise<void> =>
+    apiClient.post<void>(`/blogs/${id}/like`),
 
-  createBlog: async (data: CreateBlogRequest): Promise<BlogPost> => {
-    const response = await fetch(`${API_BASE_URL}/blogs`, {
-      method: "POST",
-      headers: getAuthHeaderJson(),
-      body: JSON.stringify(data),
-    });
+  addComment: async (blogId: number, content: string): Promise<Comment> =>
+    apiClient.post<Comment>(`/blogs/${blogId}/comments`, { content }),
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to create blog");
-    }
+  updateComment: async (commentId: number, content: string): Promise<Comment> =>
+    apiClient.put<Comment>(`/blogs/comments/${commentId}`, { content }),
 
-    return response.json();
-  },
-
-  updateBlog: async (
-    id: number,
-    data: UpdateBlogRequest,
-  ): Promise<BlogPost> => {
-    const response = await fetch(`${API_BASE_URL}/blogs/${id}`, {
-      method: "PUT",
-      headers: getAuthHeaderJson(),
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to update blog");
-    }
-
-    return response.json();
-  },
-
-  deleteBlog: async (id: number): Promise<void> => {
-    const response = await fetch(`${API_BASE_URL}/blogs/${id}`, {
-      method: "DELETE",
-      headers: getAuthHeader(),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to delete blog");
-    }
-  },
-
-  toggleLike: async (id: number): Promise<void> => {
-    const response = await fetch(`${API_BASE_URL}/blogs/${id}/like`, {
-      method: "POST",
-      headers: getAuthHeader(),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to toggle like");
-    }
-  },
-
-  addComment: async (blogId: number, content: string): Promise<Comment> => {
-    const response = await fetch(`${API_BASE_URL}/blogs/${blogId}/comments`, {
-      method: "POST",
-      headers: getAuthHeaderJson(),
-      body: JSON.stringify({ content }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to add comment");
-    }
-
-    return response.json();
-  },
-
-  updateComment: async (
-    commentId: number,
-    content: string,
-  ): Promise<Comment> => {
-    const response = await fetch(
-      `${API_BASE_URL}/blogs/comments/${commentId}`,
-      {
-        method: "PUT",
-        headers: getAuthHeaderJson(),
-        body: JSON.stringify({ content }),
-      },
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to update comment");
-    }
-
-    return response.json();
-  },
-
-  deleteComment: async (commentId: number): Promise<void> => {
-    const response = await fetch(
-      `${API_BASE_URL}/blogs/comments/${commentId}`,
-      {
-        method: "DELETE",
-        headers: getAuthHeader(),
-      },
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to delete comment");
-    }
-  },
+  deleteComment: async (commentId: number): Promise<void> =>
+    apiClient.delete<void>(`/blogs/comments/${commentId}`),
 };

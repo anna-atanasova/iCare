@@ -1,6 +1,4 @@
-import { getAuthHeader } from "@/api/auth";
-
-const API_BASE_URL = "http://localhost:8080/api";
+import { apiClient } from "@/api/client";
 
 export interface TherapistInfo {
   idUser: number;
@@ -22,29 +20,9 @@ export interface Patient {
 }
 
 export const therapistApi = {
-  getAllTherapists: async (): Promise<TherapistInfo[]> => {
-    const response = await fetch(`${API_BASE_URL}/therapists`, {
-      headers: getAuthHeader(),
-    });
+  getAllTherapists: async (): Promise<TherapistInfo[]> =>
+    apiClient.get<TherapistInfo[]>("/therapists"),
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to fetch therapists");
-    }
-
-    return response.json();
-  },
-
-  getTherapistPatients: async (): Promise<Patient[]> => {
-    const response = await fetch(`${API_BASE_URL}/therapists/patients`, {
-      headers: getAuthHeader(),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to fetch patients");
-    }
-
-    return response.json();
-  },
+  getTherapistPatients: async (): Promise<Patient[]> =>
+    apiClient.get<Patient[]>("/therapists/patients"),
 };

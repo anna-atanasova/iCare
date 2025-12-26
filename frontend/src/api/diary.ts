@@ -1,6 +1,4 @@
-import { getAuthHeader, getAuthHeaderJson } from "@/api/auth";
-
-const API_BASE_URL = "http://localhost:8080/api";
+import { apiClient } from "@/api/client";
 
 export interface DiaryEntry {
   idDiary: number;
@@ -24,66 +22,21 @@ export const diaryApi = {
     patientId: number,
     year: number,
     month: number,
-  ): Promise<DiaryEntry[]> => {
-    const response = await fetch(
-      `${API_BASE_URL}/diary/${patientId}?year=${year}&month=${month}`,
-      {
-        headers: getAuthHeader(),
-      },
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to fetch diary entries");
-    }
-
-    return response.json();
-  },
+  ): Promise<DiaryEntry[]> =>
+    apiClient.get<DiaryEntry[]>(
+      `/diary/${patientId}?year=${year}&month=${month}`,
+    ),
 
   createDiaryEntry: async (
     data: CreateDiaryEntryRequest,
-  ): Promise<DiaryEntry> => {
-    const response = await fetch(`${API_BASE_URL}/diary`, {
-      method: "POST",
-      headers: getAuthHeaderJson(),
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to create diary entry");
-    }
-
-    return response.json();
-  },
+  ): Promise<DiaryEntry> => apiClient.post<DiaryEntry>("/diary", data),
 
   updateDiaryEntry: async (
     diaryId: number,
     data: UpdateDiaryEntryRequest,
-  ): Promise<DiaryEntry> => {
-    const response = await fetch(`${API_BASE_URL}/diary/${diaryId}`, {
-      method: "PUT",
-      headers: getAuthHeaderJson(),
-      body: JSON.stringify(data),
-    });
+  ): Promise<DiaryEntry> =>
+    apiClient.put<DiaryEntry>(`/diary/${diaryId}`, data),
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to update diary entry");
-    }
-
-    return response.json();
-  },
-
-  deleteDiaryEntry: async (diaryId: number): Promise<void> => {
-    const response = await fetch(`${API_BASE_URL}/diary/${diaryId}`, {
-      method: "DELETE",
-      headers: getAuthHeader(),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to delete diary entry");
-    }
-  },
+  deleteDiaryEntry: async (diaryId: number): Promise<void> =>
+    apiClient.delete<void>(`/diary/${diaryId}`),
 };

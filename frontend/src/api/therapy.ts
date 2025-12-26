@@ -1,6 +1,4 @@
-import { getAuthHeader, getAuthHeaderJson } from "@/api/auth";
-
-const API_BASE_URL = "http://localhost:8080/api";
+import { apiClient } from "@/api/client";
 
 export interface Therapy {
   idTherapy: number;
@@ -25,70 +23,21 @@ export interface UpdateTherapyRequest {
 export const therapyApi = {
   getTherapiesByConsultation: async (
     consultationId: number,
-  ): Promise<Therapy[]> => {
-    const response = await fetch(
-      `${API_BASE_URL}/therapies/consultation/${consultationId}`,
-      {
-        headers: getAuthHeader(),
-      },
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to fetch therapies");
-    }
-
-    return response.json();
-  },
+  ): Promise<Therapy[]> =>
+    apiClient.get<Therapy[]>(`/therapies/consultation/${consultationId}`),
 
   createTherapy: async (
     consultationId: number,
     data: CreateTherapyRequest,
-  ): Promise<Therapy> => {
-    const response = await fetch(
-      `${API_BASE_URL}/therapies/consultation/${consultationId}`,
-      {
-        method: "POST",
-        headers: getAuthHeaderJson(),
-        body: JSON.stringify(data),
-      },
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to create therapy");
-    }
-
-    return response.json();
-  },
+  ): Promise<Therapy> =>
+    apiClient.post<Therapy>(`/therapies/consultation/${consultationId}`, data),
 
   updateTherapy: async (
     therapyId: number,
     data: UpdateTherapyRequest,
-  ): Promise<Therapy> => {
-    const response = await fetch(`${API_BASE_URL}/therapies/${therapyId}`, {
-      method: "PUT",
-      headers: getAuthHeaderJson(),
-      body: JSON.stringify(data),
-    });
+  ): Promise<Therapy> =>
+    apiClient.put<Therapy>(`/therapies/${therapyId}`, data),
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to update therapy");
-    }
-
-    return response.json();
-  },
-
-  deleteTherapy: async (therapyId: number): Promise<void> => {
-    const response = await fetch(`${API_BASE_URL}/therapies/${therapyId}`, {
-      method: "DELETE",
-      headers: getAuthHeader(),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to delete therapy");
-    }
-  },
+  deleteTherapy: async (therapyId: number): Promise<void> =>
+    apiClient.delete<void>(`/therapies/${therapyId}`),
 };
