@@ -48,9 +48,7 @@ const TherapyList: Component<TherapyListProps> = (props) => {
     const newTherapies = [...props.therapies];
 
     if (editingId()) {
-      const index = newTherapies.findIndex((t) => {
-        return t.idTherapy === editingId();
-      });
+      const index = newTherapies.findIndex((t) => t.idTherapy === editingId());
 
       if (index !== -1) {
         newTherapies[index] = {

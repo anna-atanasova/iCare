@@ -1,4 +1,4 @@
-import { type Component, For, Show, createSignal } from "solid-js";
+import { type Component, createSignal, For, Show } from "solid-js";
 import { formatDateTime } from "@/utils";
 import { useAuth } from "@/context/AuthContext";
 import type { Comment } from "@/api/blog";
@@ -60,12 +60,11 @@ const CommentSection: Component<CommentSectionProps> = (props) => {
   const sortedComments = () => {
     if (!props.comments) return [];
 
-    return [...props.comments].sort((a, b) => {
-      return (
+    return [...props.comments].sort(
+      (a, b) =>
         new Date(b.dateOfComment).getTime() -
-        new Date(a.dateOfComment).getTime()
-      );
-    });
+        new Date(a.dateOfComment).getTime(),
+    );
   };
 
   return (

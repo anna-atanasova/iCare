@@ -21,7 +21,7 @@ const getHeaders = (includeContentType = false): HeadersInit => {
   return headers;
 };
 
-async function handleResponse<T>(response: Response): Promise<T> {
+const handleResponse = async <T>(response: Response): Promise<T> => {
   if (!response.ok) {
     const error: ApiError = await response.json().catch(() => ({
       message: "An error occurred",
@@ -34,7 +34,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
   }
 
   return response.json();
-}
+};
 
 export const apiClient = {
   get: async <T>(endpoint: string): Promise<T> => {
