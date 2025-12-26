@@ -13,9 +13,18 @@ public class DotenvConfig implements ApplicationContextInitializer<ConfigurableA
 
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
-        Dotenv dotenv = Dotenv.configure()
+        Dotenv dotenv;
+
+        try {
+            // Configuration needed for IntelliJ, since it runs the app from the project root
+            dotenv = Dotenv.configure()
                 .directory("./backend")
                 .load();
+        } catch (Exception e) {
+            dotenv = Dotenv.configure()
+                .directory(".")
+                .load();
+        }
 
         ConfigurableEnvironment environment = applicationContext.getEnvironment();
         Map<String, Object> dotenvProperties = new HashMap<>();
