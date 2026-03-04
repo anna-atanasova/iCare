@@ -1,6 +1,7 @@
-CREATE OR REPLACE FUNCTION fn_validate_consultation_slots()
+CREATE OR REPLACE FUNCTION project.fn_validate_consultation_slots()
     RETURNS trigger
     LANGUAGE plpgsql
+    SET search_path = project, public
 AS $$
 DECLARE
     d date;
@@ -11,7 +12,7 @@ BEGIN
 
     FOREACH d IN ARRAY NEW.consultation_slots
         LOOP
-            IF d < CURRENT_DATE THEN
+            IF d < CURRENT_DATE AND (TG_OP = 'INSERT' OR OLD.consultation_slots IS NULL OR NOT (d = ANY(OLD.consultation_slots))) THEN
                 RAISE EXCEPTION 'consultation_slots contains past date %', d;
             END IF;
         END LOOP;
@@ -19,37 +20,39 @@ BEGIN
     RETURN NEW;
 END;
 $$;
-CREATE TRIGGER trg_validate_consultation_slots
+CREATE OR REPLACE TRIGGER trg_validate_consultation_slots
     BEFORE INSERT OR UPDATE
-    ON therapist
+    ON project.therapist
     FOR EACH ROW
-EXECUTE FUNCTION fn_validate_consultation_slots();
+EXECUTE FUNCTION project.fn_validate_consultation_slots();
 
 
-CREATE OR REPLACE FUNCTION fn_validate_therapy_exp_date()
+CREATE OR REPLACE FUNCTION project.fn_validate_therapy_exp_date()
     RETURNS trigger
     LANGUAGE plpgsql
+    SET search_path = project, public
 AS $$
 DECLARE
     consult_date DATE;
 BEGIN
-    SELECT date INTO consult_date FROM consultation WHERE id_consultation = NEW.id_consultation;
+    SELECT date INTO consult_date FROM project.consultation WHERE id_consultation = NEW.id_consultation;
     IF consult_date IS NOT NULL AND NEW.exp_date < consult_date THEN
         RAISE EXCEPTION 'therapy.exp_date (%) cannot be before consultation date (%)', NEW.exp_date, consult_date;
     END IF;
     RETURN NEW;
 END;
 $$;
-CREATE TRIGGER trg_validate_therapy_exp_date
+CREATE OR REPLACE TRIGGER trg_validate_therapy_exp_date
     BEFORE INSERT OR UPDATE
-    ON therapy
+    ON project.therapy
     FOR EACH ROW
-EXECUTE FUNCTION fn_validate_therapy_exp_date();
+EXECUTE FUNCTION project.fn_validate_therapy_exp_date();
 
 
-CREATE OR REPLACE FUNCTION fn_validate_diary_not_future()
+CREATE OR REPLACE FUNCTION project.fn_validate_diary_not_future()
     RETURNS trigger
     LANGUAGE plpgsql
+    SET search_path = project, public
 AS $$
 BEGIN
     IF NEW.date > CURRENT_DATE THEN
@@ -58,16 +61,17 @@ BEGIN
     RETURN NEW;
 END;
 $$;
-CREATE TRIGGER trg_validate_diary_not_future
+CREATE OR REPLACE TRIGGER trg_validate_diary_not_future
     BEFORE INSERT OR UPDATE
-    ON diary
+    ON project.diary
     FOR EACH ROW
-EXECUTE FUNCTION fn_validate_diary_not_future();
+EXECUTE FUNCTION project.fn_validate_diary_not_future();
 
 
-CREATE OR REPLACE FUNCTION fn_validate_consultation_payment_date()
+CREATE OR REPLACE FUNCTION project.fn_validate_consultation_payment_date()
     RETURNS trigger
     LANGUAGE plpgsql
+    SET search_path = project, public
 AS $$
 BEGIN
     IF NEW.date_of_payment IS NOT NULL AND NEW.date_of_payment < NEW.date THEN
@@ -76,8 +80,8 @@ BEGIN
     RETURN NEW;
 END;
 $$;
-CREATE TRIGGER trg_validate_consultation_payment_date
+CREATE OR REPLACE TRIGGER trg_validate_consultation_payment_date
     BEFORE INSERT OR UPDATE
-    ON consultation
+    ON project.consultation
     FOR EACH ROW
-EXECUTE FUNCTION fn_validate_consultation_payment_date();
+EXECUTE FUNCTION project.fn_validate_consultation_payment_date();
