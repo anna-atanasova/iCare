@@ -26,14 +26,14 @@ public class PatientController {
             Authentication authentication) {
         Integer patientId = AuthUtils.getUserId(authentication);
         patientService.setTherapist(patientId, therapistId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/therapist")
     public ResponseEntity<Void> removeTherapist(Authentication authentication) {
         Integer patientId = AuthUtils.getUserId(authentication);
         patientService.removeTherapist(patientId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/therapist")
